@@ -1,0 +1,10 @@
+﻿  Game.cpp
+  Graphics.cpp
+  Input.cpp
+  Level.cpp
+  Main.cpp
+  Rectangle.cpp
+  RedBox.cpp
+  tinyxml2.cpp
+  Generating Code...
+  RedBoxPrj.vcxproj -> C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\x64\Debug\RedBoxPrj.exe
