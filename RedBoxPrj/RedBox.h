@@ -24,6 +24,8 @@ private:
 	int _width;
 	int _height;
 	bool _jumping;
+	bool _grounded;
+	int _frameCounter;
 
 	SDL_Rect _destRect;
 	SDL_Texture* _redBox;

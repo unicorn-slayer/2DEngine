@@ -38,7 +38,7 @@ void Game::gameLoop()
 
 		int endTimer = SDL_GetTicks();
 		int elapsedTime = endTimer - startTimer;
-		startTimer = endTimer;
+		startTimer = endTimer;	
 
 		redBox.update(elapsedTime, level.getCollisionTiles());
 
