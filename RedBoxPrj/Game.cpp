@@ -17,6 +17,7 @@ void Game::gameLoop()
 	Graphics graphics;
 	Input input;
 	Level level;
+	Rectangle camera = { 0, 0, 700, 700 };
 
 	level.loadMap(graphics, "map.tmx");
 	RedBox redBox(graphics, globals::g_centreX, globals::g_centreY-300);
@@ -41,12 +42,13 @@ void Game::gameLoop()
 		startTimer = endTimer;	
 
 		redBox.update(elapsedTime, level.getCollisionTiles());
+		redBox.setCamera(camera);
 
 		graphics.clear();
 
-		level.draw(graphics);
+		level.draw(graphics, camera);
 
-		redBox.draw(graphics);		
+		redBox.draw(graphics, camera);		
 
 		graphics.flip();
 	}

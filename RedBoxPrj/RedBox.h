@@ -13,7 +13,8 @@ public:
 	RedBox(Graphics& graphics, float x, float y);
 	void handleEvent(SDL_Event& e);
 	void update(const int& elapsedTime, const std::vector<Tile>& collisionTiles);
-	void draw(Graphics& graphics);
+	void draw(Graphics& graphics, Rectangle& camera);
+	void setCamera(Rectangle& camera);
 
 private:
 	float _x;

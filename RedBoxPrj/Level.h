@@ -20,7 +20,7 @@ class Level
 public:
 	Level();
 	void loadMap(Graphics& graphics, const std::string& file);
-	void draw(Graphics& graphics);
+	void draw(Graphics& graphics, Rectangle& camera);
 	std::vector<Tile> getCollisionTiles();
 
 private:

@@ -159,14 +159,14 @@ void RedBox::update(const int& elapsedTime, const std::vector<Tile>& collisionTi
 	}
 
 	// hanlde screen out of bounds in x
-	if (_x < 0 || _x >(globals::g_screenWidth - globals::g_tileWidth))
+	if (_x < 0 || _x >(globals::g_mapWidth - globals::g_tileWidth))
 	{
 		_x = startingX;
 		_rect._x = startingX;
 	}
 
 	// handle screen out of bounds in y
-	if (_y < 0 || _y > (globals::g_screenWidth - globals::g_tileWidth))
+	if (_y < 0 || _y > (globals::g_mapWidth - globals::g_tileWidth))
 	{
 		_y = startingY;
 		_rect._y = startingY;
@@ -176,7 +176,38 @@ void RedBox::update(const int& elapsedTime, const std::vector<Tile>& collisionTi
 	_destRect = { (int)_x, (int)_y, _width, _height };
 }
 
-void RedBox::draw(Graphics& graphics)
+void RedBox::draw(Graphics& graphics, Rectangle& camera)
 {
+	//when drawing, need to offset the redBox by the camera distance
+	_destRect.x = _destRect.x - (int)camera._x;
+	_destRect.y = _destRect.y - (int)camera._y;
+
 	graphics.blitSurface(_redBox, NULL, &_destRect);
+}
+
+void RedBox::setCamera(Rectangle& camera)
+{
+	//Center the camera over the dot, 700 is screen width
+	camera._x = (_rect._x + (_width / 2)) - (globals::g_screenWidth/2);
+	camera._y = (_rect._y + (_height / 2)) - (globals::g_screenHeight/2);
+
+	//Keep the camera in bounds
+	if (camera._x < 0)
+	{
+		camera._x = 0;
+	}
+	if (camera._y < 0)
+	{
+		camera._y = 0;
+	}
+
+	//screen width needs to be changed to level width below
+	if (camera._x > globals::g_mapWidth - camera._width)
+	{
+		camera._x = float(globals::g_mapWidth - camera._width);
+	}
+	if (camera._y > globals::g_mapHeight - camera._height)
+	{
+		camera._y = float(globals::g_mapHeight - camera._height);
+	}
 }

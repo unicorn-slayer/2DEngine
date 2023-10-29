@@ -18,7 +18,7 @@ Tile::Tile(SDL_Rect source, SDL_Rect dest)
 {
     sourceRect = source;
     destRect = dest;
-    boundingBox = Rectangle();
+    boundingBox = Rectangle((float)dest.x, (float)dest.y, dest.w, dest.h);
 }
 
 
@@ -205,11 +205,18 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
 
 }
 
-void Level::draw(Graphics& graphics)
+void Level::draw(Graphics& graphics, Rectangle& camera)
 {
     for (Tile tile : m_tiles)
     {
-        graphics.blitSurface(m_tileset, &tile.sourceRect, &tile.destRect);
+        if (camera.checkCollision(tile))
+        {
+            //as player moves, the tiles need to be offset by the camera x and y values
+            tile.destRect.x = tile.destRect.x - (int)camera._x;
+            tile.destRect.y = tile.destRect.y - (int)camera._y;
+
+            graphics.blitSurface(m_tileset, &tile.sourceRect, &tile.destRect);
+        }
     }
 }
 
