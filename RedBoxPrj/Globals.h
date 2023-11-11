@@ -1,0 +1,27 @@
+#pragma once
+
+namespace globals {
+
+	const int g_screenWidth = 700;
+	const int g_screenHeight = 700;
+	const int g_mapWidth = 960;
+	const int g_mapHeight = 700;
+	const int g_tileWidth = 32;
+	const int g_tileHeight = 32;
+
+	const float g_centreX = ((g_screenWidth - g_tileWidth) / 2);
+	const float g_centreY = ((g_screenHeight - g_tileHeight) / 2);
+
+	const float g_gravityCap = 0.8f;
+}
+
+namespace sides {
+	enum Side {
+		TOP,
+		BOTTOM,
+		LEFT,
+		RIGHT,
+		NONE
+	};
+
+}
