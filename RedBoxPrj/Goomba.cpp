@@ -206,6 +206,7 @@ void Goomba::handleCollisions(const std::vector<Tile>& collisionTiles)
 	}
 }
 
+//handles screen going out of bounds
 void Goomba::handleScreenBounds(const float& elapsedTime)
 {
 	float max_x = globals::g_mapWidth - globals::g_tileWidth;
