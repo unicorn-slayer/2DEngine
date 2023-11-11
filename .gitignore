@@ -6,3 +6,6 @@
 
 # Ignore the RedBoxPrj/x64 directory
 RedBoxPrj/x64/
+
+# Ignore the x64 directory
+x64/
