@@ -1,0 +1,8 @@
+# Ignore the .git directory
+.git/
+
+# Ignore the .vs directory
+.vs/
+
+# Ignore the RedBoxPrj/x64 directory
+RedBoxPrj/x64/
