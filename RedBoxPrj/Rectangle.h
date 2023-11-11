@@ -12,8 +12,7 @@ public:
 	Rectangle();
 	Rectangle(float x, float y, int width, int height);
 
-	// std::vector<Rectangle> checkCollision(const std::vector<Tile>& collisionRects);
-	bool checkCollision(const Tile& tile);
+	bool checkCollision(const Rectangle& rect);
 	sides::Side getCollisionSide(Rectangle& other);
 
 	float _x;

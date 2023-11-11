@@ -18,6 +18,7 @@ SDL_Surface* Graphics::loadImage(const std::string& filePath)
 {
 	if (this->_spriteSheets.count(filePath) == 0) {
 		this->_spriteSheets[filePath] = IMG_Load(filePath.c_str());
+		SDL_SetColorKey(this->_spriteSheets[filePath], SDL_TRUE, SDL_MapRGB(this->_spriteSheets[filePath]->format, 0x92, 0x90, 0xFF));
 	}
 	return this->_spriteSheets[filePath];
 }

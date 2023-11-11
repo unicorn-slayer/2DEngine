@@ -9,7 +9,7 @@ Rectangle::Rectangle(float x, float y, int width, int height) : _x(x), _y(y), _w
 {
 }
 
-bool Rectangle::checkCollision(const Tile& tile)
+bool Rectangle::checkCollision(const Rectangle& rect)
 {
     //The sides of the rectangles
     float leftA, leftB;
@@ -24,10 +24,10 @@ bool Rectangle::checkCollision(const Tile& tile)
     bottomA = _y + _height;
 
     //Calculate the sides of rect B
-    leftB = tile.boundingBox._x;
-    rightB = tile.boundingBox._x + tile.boundingBox._width;
-    topB = tile.boundingBox._y;
-    bottomB = tile.boundingBox._y + tile.boundingBox._height;
+    leftB = rect._x;
+    rightB = rect._x + rect._width;
+    topB = rect._y;
+    bottomB = rect._y + rect._height;
 
     //If any of the sides from A are outside of B
     if (bottomA <= topB)

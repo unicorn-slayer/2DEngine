@@ -209,7 +209,7 @@ void Level::draw(Graphics& graphics, Rectangle& camera)
 {
     for (Tile tile : m_tiles)
     {
-        if (camera.checkCollision(tile))
+        if (camera.checkCollision(tile.boundingBox))
         {
             //as player moves, the tiles need to be offset by the camera x and y values
             tile.destRect.x = tile.destRect.x - (int)camera._x;

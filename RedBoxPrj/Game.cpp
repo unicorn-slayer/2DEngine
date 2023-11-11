@@ -5,6 +5,7 @@
 #include "RedBox.h"
 #include "Level.h"
 #include "Globals.h"
+#include "Goomba.h"
 
 Game::Game()
 {
@@ -20,7 +21,8 @@ void Game::gameLoop()
 	Rectangle camera = { 0, 0, 700, 700 };
 
 	level.loadMap(graphics, "map.tmx");
-	RedBox redBox(graphics, globals::g_centreX, globals::g_centreY-300);
+	Goomba goomba(graphics, globals::g_centreX, globals::g_centreY - 300);
+
 
 	int startTimer = SDL_GetTicks();
 
@@ -34,21 +36,21 @@ void Game::gameLoop()
 				return;
 			}
 
-			redBox.handleEvent(event);
+			goomba.handleEvent(event);
 		}
 
 		int endTimer = SDL_GetTicks();
 		int elapsedTime = endTimer - startTimer;
 		startTimer = endTimer;	
 
-		redBox.update(elapsedTime, level.getCollisionTiles());
-		redBox.setCamera(camera);
+		goomba.update((float)elapsedTime, level.getCollisionTiles());
+		goomba.setCamera(camera);
 
 		graphics.clear();
 
 		level.draw(graphics, camera);
 
-		redBox.draw(graphics, camera);		
+		goomba.draw(graphics, camera);
 
 		graphics.flip();
 	}
