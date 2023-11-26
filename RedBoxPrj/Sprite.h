@@ -13,6 +13,10 @@ public:
 	Sprite(Graphics& graphics, const std::string& filePath, int sourceX, int sourceY, int width, int height, float x, float y);
 	void update();
 	void draw(Graphics& graphics, int x, int y);
+	float getX();
+	float getY();
+	void setX(float x);
+	void setY(float y);
 
 protected:
 	SDL_Rect m_sourceRect;

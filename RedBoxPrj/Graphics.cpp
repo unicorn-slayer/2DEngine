@@ -3,7 +3,6 @@
 
 Graphics::Graphics()
 {
-	//640, 480
 	SDL_CreateWindowAndRenderer(700, 700, 0, &this->_window, &this->_renderer);
 	SDL_SetWindowTitle(this->_window, "RedBox");
 }

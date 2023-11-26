@@ -23,3 +23,23 @@ void Sprite::draw(Graphics& graphics, int x, int y)
 	graphics.blitSurface(m_spriteSheet, &m_sourceRect, &destinationRectangle);
 
 }
+
+float Sprite::getX()
+{
+	return m_x;
+}
+
+float Sprite::getY()
+{
+	return m_y;
+}
+
+void Sprite::setX(float x)
+{
+	m_x = x;
+}
+
+void Sprite::setY(float y)
+{
+	m_y = y;
+}

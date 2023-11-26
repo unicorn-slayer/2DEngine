@@ -58,7 +58,7 @@ sides::Side Rectangle::getCollisionSide(Rectangle& other)
     float amtRight, amtLeft, amtTop, amtBottom;
     amtRight = (_x + _width) - other._x;
     amtLeft = (other._x + other._width) - _x;
-    amtTop = (other._y + other._height) - _x;
+    amtTop = (other._y + other._height) - _y;
     amtBottom = (_y + _height) - other._y;
 
     float vals[4] = { abs(amtRight), abs(amtLeft), abs(amtTop), abs(amtBottom) };

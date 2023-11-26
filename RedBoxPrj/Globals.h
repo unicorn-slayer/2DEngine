@@ -4,7 +4,7 @@ namespace globals {
 
 	const int g_screenWidth = 700;
 	const int g_screenHeight = 700;
-	const int g_mapWidth = 960;
+	const int g_mapWidth = 1920;
 	const int g_mapHeight = 700;
 	const int g_tileWidth = 32;
 	const int g_tileHeight = 32;

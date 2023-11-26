@@ -5,7 +5,7 @@ Goomba::Goomba(Graphics& graphics, float x, float y)
 	: AnimatedSprite(graphics, "goomba.png", 0, 0, 32, 32, x, y, 100)
 	, m_accelX(0)
 	, m_accelY(0)
-	, m_accelerationMagX(0.004f)
+	, m_accelerationMagX(0.008f)
 	, m_accelerationMagY(0.002f)
 	, m_jumping(false)
 	, m_grounded(false)
@@ -14,10 +14,10 @@ Goomba::Goomba(Graphics& graphics, float x, float y)
 	, m_leftHeld(false)
 	, m_playerVelocityX(0)
 	, m_playerVelocityY(0)
+
 {
 	this->setupAnimation();
 	AnimatedSprite::playAnimation("goombaStop");
-
 }
 
 void Goomba::handleEvent(SDL_Event& e)
@@ -29,13 +29,11 @@ void Goomba::handleEvent(SDL_Event& e)
 		{
 		case SDLK_LEFT:
 			m_accelX = -m_accelerationMagX;
-			if (m_grounded) { AnimatedSprite::playAnimation("goombaWalk"); }			
 			m_leftHeld = true;
 			break;
 
 		case SDLK_RIGHT:
 			m_accelX = m_accelerationMagX;
-			if (m_grounded) { AnimatedSprite::playAnimation("goombaWalk"); }
 			m_rightHeld = true;
 			break;
 
@@ -45,7 +43,6 @@ void Goomba::handleEvent(SDL_Event& e)
 				m_jumping = true;
  				m_playerVelocityY = -1.1f;
 				m_grounded = false;
-				AnimatedSprite::playAnimation("goombaStop");
 			}
 			break;
 		}
@@ -58,13 +55,11 @@ void Goomba::handleEvent(SDL_Event& e)
 		{
 		case SDLK_LEFT:
 			m_accelX = m_accelerationMagX;
-			AnimatedSprite::playAnimation("goombaStop");
 			m_leftHeld = false;
 			break;
 
 		case SDLK_RIGHT:
 			m_accelX = -m_accelerationMagX;
-			AnimatedSprite::playAnimation("goombaStop");
 			m_rightHeld = false;
 			break;
 
@@ -90,13 +85,15 @@ void Goomba::update(const float& elapsedTime, const std::vector<Tile>& collision
 
 	this->handleScreenBounds(elapsedTime);
 
+	this->doAnimations();
+
 	this->animationUpdate(elapsedTime);
 }
 
 void Goomba::move(const float& elapsedTime)
 {
 	// move x
-	float maxSpeed = 0.8f;
+	float maxSpeed = 0.6f;
 
 	if (m_leftHeld || m_rightHeld)
 	{
@@ -106,13 +103,14 @@ void Goomba::move(const float& elapsedTime)
 	}
 	else
 	{
-		if (m_playerVelocityX > 0)
+		if (m_accelX <= 0)
 		{
 			m_playerVelocityX += m_accelX * elapsedTime;
 
 			m_playerVelocityX = std::max(0.0f, m_playerVelocityX);
 		}
-		if (m_playerVelocityX < 0)
+
+		if (m_accelX >= 0)
 		{
 			m_playerVelocityX += m_accelX * elapsedTime;
 
@@ -133,6 +131,13 @@ void Goomba::move(const float& elapsedTime)
 	// Update y position
 	m_y += (m_playerVelocityY * elapsedTime);
 	m_boundingBox._y += (m_playerVelocityY * elapsedTime);
+
+	if (m_goombaDataQueue.size() < 200)
+	{
+		goombaData goomba(m_x, m_y, m_grounded, m_playerVelocityX);
+
+		m_goombaDataQueue.emplace(goomba);
+	}
 }
 
 void Goomba::handleCollisions(const std::vector<Tile>& collisionTiles)
@@ -152,19 +157,19 @@ void Goomba::handleCollisions(const std::vector<Tile>& collisionTiles)
 	{
 		for (Tile& tile : collisionTilesActive)
 		{
-			sides::Side side = m_boundingBox.getCollisionSide(tile.boundingBox);
+  			sides::Side side = m_boundingBox.getCollisionSide(tile.boundingBox);
 
 			switch (side)
 			{
 			case sides::TOP:
 				m_playerVelocityY = 0;
-				Sprite::m_y = tile.boundingBox._y + 1;
-				Sprite::m_boundingBox._y = tile.boundingBox._y + 1;
+				Sprite::m_y = tile.boundingBox._y + globals::g_tileHeight + 1;
+				Sprite::m_boundingBox._y = tile.boundingBox._y + globals::g_tileHeight + 1;
 				break;
 
 			case sides::BOTTOM:
-				Sprite::m_y = tile.boundingBox._y - globals::g_tileHeight - 1;
-				Sprite::m_boundingBox._y = tile.boundingBox._y - globals::g_tileHeight - 1;
+				Sprite::m_y = tile.boundingBox._y - globals::g_tileHeight;
+				Sprite::m_boundingBox._y = tile.boundingBox._y - globals::g_tileHeight;
 				m_playerVelocityY = 0;
 				m_grounded = true;
 				m_frameCounter = 0;
@@ -212,7 +217,7 @@ void Goomba::handleScreenBounds(const float& elapsedTime)
 	float max_x = globals::g_mapWidth - globals::g_tileWidth;
 	float max_y = globals::g_mapHeight - globals::g_tileHeight;
 
-	// hanlde screen out of bounds in x
+	// handle screen out of bounds in x
 	if (Sprite::m_x < 0)
 	{
 		Sprite::m_x = 0;
@@ -278,6 +283,25 @@ void Goomba::setCamera(Rectangle& camera)
 	if (camera._y > globals::g_mapHeight - camera._height)
 	{
 		camera._y = float(globals::g_mapHeight - camera._height);
+	}
+}
+
+void Goomba::doAnimations()
+{
+	if (m_playerVelocityX != 0.0f)
+	{
+		if (m_grounded)
+		{
+			AnimatedSprite::playAnimation("goombaWalk");
+		}
+		else
+		{
+			AnimatedSprite::playAnimation("goombaStop");
+		}
+	}
+	else
+	{
+		AnimatedSprite::playAnimation("goombaStop");
 	}
 }
 

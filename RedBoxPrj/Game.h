@@ -1,6 +1,8 @@
 #pragma once
 #include "RedBox.h"
 
+class Goomba;
+
 class Game
 {
 public:
@@ -8,6 +10,8 @@ public:
 	Game();
 
 	void gameLoop();
+
+	void algorithm(std::vector<Goomba>& goombas);
 
 private:
 
