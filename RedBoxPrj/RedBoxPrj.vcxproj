@@ -70,13 +70,29 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\headers;$(IncludePath)</IncludePath>
+    <SourcePath>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\source;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\headers;$(IncludePath)</IncludePath>
+    <SourcePath>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\source;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\headers;$(IncludePath)</IncludePath>
+    <SourcePath>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\source;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\headers;$(IncludePath)</IncludePath>
+    <SourcePath>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\source;$(SourcePath)</SourcePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Libraries\SDL2\include;C:\Libraries\SDL2_image-2.6.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\include;C:\Libraries\SDL2\include;C:\Libraries\SDL2_image-2.6.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -94,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Libraries\SDL2\include;C:\Libraries\SDL2_image-2.6.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\include;C:\Libraries\SDL2\include;C:\Libraries\SDL2_image-2.6.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -112,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Libraries\SDL2\include;C:\Libraries\SDL2_image-2.6.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\include;C:\Libraries\SDL2\include;C:\Libraries\SDL2_image-2.6.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -130,7 +146,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Libraries\SDL2\include;C:\Libraries\SDL2_image-2.6.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Michael\OneDrive\Desktop\CPP\RedBoxSln\RedBoxPrj\include;C:\Libraries\SDL2\include;C:\Libraries\SDL2_image-2.6.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -143,30 +159,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AnimatedSprite.cpp" />
-    <ClCompile Include="AnimatedSprite.h" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Goomba.cpp" />
-    <ClCompile Include="Graphics.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Level.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Rectangle.cpp" />
-    <ClCompile Include="RedBox.cpp" />
-    <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="Sprite.h" />
-    <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="source\AnimatedSprite.cpp" />
+    <ClCompile Include="headers\AnimatedSprite.h" />
+    <ClCompile Include="source\Game.cpp" />
+    <ClCompile Include="source\Goomba.cpp" />
+    <ClCompile Include="source\Graphics.cpp" />
+    <ClCompile Include="source\Input.cpp" />
+    <ClCompile Include="source\Level.cpp" />
+    <ClCompile Include="source\Main.cpp" />
+    <ClCompile Include="source\Mario.cpp" />
+    <ClCompile Include="source\Rectangle.cpp" />
+    <ClCompile Include="source\RedBox.cpp" />
+    <ClCompile Include="source\Sprite.cpp" />
+    <ClCompile Include="headers\Sprite.h" />
+    <ClCompile Include="source\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="Globals.h" />
-    <ClInclude Include="Goomba.h" />
-    <ClInclude Include="Graphics.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Level.h" />
-    <ClInclude Include="Rectangle.h" />
-    <ClInclude Include="RedBox.h" />
-    <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="headers\Game.h" />
+    <ClInclude Include="headers\Globals.h" />
+    <ClInclude Include="headers\Goomba.h" />
+    <ClInclude Include="headers\Graphics.h" />
+    <ClInclude Include="headers\Input.h" />
+    <ClInclude Include="headers\Level.h" />
+    <ClInclude Include="headers\Mario.h" />
+    <ClInclude Include="headers\Rectangle.h" />
+    <ClInclude Include="headers\RedBox.h" />
+    <ClInclude Include="headers\tinyxml2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

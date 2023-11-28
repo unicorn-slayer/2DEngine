@@ -33,8 +33,6 @@ public:
 
 	void draw(Graphics& graphics, Rectangle& camera);
 
-	void draw(Graphics& graphics, Rectangle& camera, float offset);
-
 	void setCamera(Rectangle& camera);
 
 	void doAnimations();
@@ -61,6 +59,5 @@ private:
 	bool	m_rightHeld;
 	bool	m_leftHeld;
 
-	SDL_Keycode m_currentKey;
 
 };

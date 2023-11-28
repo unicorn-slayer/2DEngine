@@ -8,6 +8,7 @@
 #include "Goomba.h"
 #include <iostream>
 #include <algorithm>
+#include "Mario.h"
 
 Game::Game()
 {
@@ -30,6 +31,8 @@ void Game::gameLoop()
 		Goomba goomba(graphics, globals::g_centreX, globals::g_centreY - 300);
 		goombas.push_back(goomba);
 	}
+
+	Mario mario(graphics, globals::g_centreX - 200, globals::g_centreY - 300);
 
 	SDL_Event event;
 
@@ -55,12 +58,18 @@ void Game::gameLoop()
 
 		this->algorithm(goombas);
 
+		mario.update(timeStep, level.getCollisionTiles());
+
 		for (int i = 1; i < goombas.size(); i++)
 		{
 			goombas[i].doAnimations();
 
 			goombas[i].animationUpdate(timeStep);
 		}
+
+		mario.doAnimations();
+
+		mario.animationUpdate(timeStep);
 
 		goombas[0].setCamera(camera);
 
@@ -72,6 +81,8 @@ void Game::gameLoop()
 		{
 			goombas[i].draw(graphics, camera);
 		}
+
+		mario.draw(graphics, camera);
 
 		graphics.flip();
 
