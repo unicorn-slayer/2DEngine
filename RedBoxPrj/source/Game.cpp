@@ -32,6 +32,8 @@ void Game::gameLoop()
 		goombas.push_back(goomba);
 	}
 
+	Goomba cameraGoomba(graphics, globals::g_centreX, globals::g_centreY - 300);
+
 	Mario mario(graphics, globals::g_centreX - 200, globals::g_centreY - 300);
 
 	SDL_Event event;
@@ -48,39 +50,69 @@ void Game::gameLoop()
 				return;
 			}
 
-			goombas[0].handleEvent(event);
+			if (goombas.size())
+			{
+				goombas[0].handleEvent(event);
+			}
 
+			cameraGoomba.handleEvent(event);
 		}
+
+		//if (goombas.size())
+		//{
+		//	goombas[0].setCamera(camera);
+		//}
+
+		cameraGoomba.setCamera(camera);
 
 		float timeStep = 3.0f;
 
-		goombas[0].update(timeStep, level.getCollisionTiles());
-
-		this->algorithm(goombas);
-
 		mario.update(timeStep, level.getCollisionTiles());
 
-		for (int i = 1; i < goombas.size(); i++)
+		if (goombas.size())
 		{
-			goombas[i].doAnimations();
-
-			goombas[i].animationUpdate(timeStep);
+			goombas[0].update(timeStep, level.getCollisionTiles());
 		}
+
+		cameraGoomba.update(timeStep, level.getCollisionTiles());
+
+		if (goombas.size())
+		{
+			this->algorithm(goombas);
+		}
+
+
+		this->checkEnemyCollisions(mario, goombas);
+
+		if (goombas.size() > 1)
+		{
+			for (int i = 1; i < goombas.size(); i++)
+			{
+				goombas[i].doAnimations();
+
+				goombas[i].animationUpdate(timeStep);
+			}
+		}
+
 
 		mario.doAnimations();
 
 		mario.animationUpdate(timeStep);
 
-		goombas[0].setCamera(camera);
+
 
 		graphics.clear();
 
 		level.draw(graphics, camera);
 
-		for (int i = 0; i < goombas.size(); i++)
+		if (goombas.size())
 		{
-			goombas[i].draw(graphics, camera);
+			for (int i = 0; i < goombas.size(); i++)
+			{
+				goombas[i].draw(graphics, camera);
+			}
 		}
+
 
 		mario.draw(graphics, camera);
 
@@ -116,9 +148,25 @@ void Game::algorithm(std::vector<Goomba>& goombas)
 			nextGoomba.setY(goombaDataQueue.front().yPosition);
 			nextGoomba.m_grounded = goombaDataQueue.front().grounded;
 			nextGoomba.m_playerVelocityX = goombaDataQueue.front().xVelocity;
+			nextGoomba.m_leftHeld = goombaDataQueue.front().left_held;
+			nextGoomba.m_rightHeld = goombaDataQueue.front().right_held;
 
-			nextGoomba.m_goombaDataQueue.emplace(nextGoomba.getX(), nextGoomba.getY(), nextGoomba.m_grounded, nextGoomba.m_playerVelocityX);
+			nextGoomba.m_goombaDataQueue.emplace(nextGoomba.getX(), nextGoomba.getY(), nextGoomba.m_grounded, nextGoomba.m_playerVelocityX, nextGoomba.m_leftHeld, nextGoomba.m_rightHeld);
 			goombaDataQueue.pop();
+		}
+	}
+}
+
+void Game::checkEnemyCollisions(Mario& mario, std::vector<Goomba>& goombas)
+{
+	if (goombas.size() > 0)
+	{
+		for (int i = 0; i < goombas.size(); i++)
+		{
+			if (goombas[i].getBoundingBox().checkCollision(mario.getBoundingBox()))
+			{
+				goombas.erase(goombas.begin() + i);
+			}
 		}
 	}
 }

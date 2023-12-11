@@ -43,3 +43,8 @@ void Sprite::setY(float y)
 {
 	m_y = y;
 }
+
+Rectangle Sprite::getBoundingBox()
+{
+	return m_boundingBox;
+}

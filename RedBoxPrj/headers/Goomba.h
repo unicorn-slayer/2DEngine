@@ -7,11 +7,13 @@
 
 struct goombaData
 {
-	goombaData(float x, float y, bool grounded, float xVelocity) : xPosition(x), yPosition(y), grounded(grounded), xVelocity(xVelocity) {};
+	goombaData(float x, float y, bool grounded, float xVelocity, bool right_held, bool left_held) : xPosition(x), yPosition(y), grounded(grounded), xVelocity(xVelocity), right_held(right_held), left_held(left_held) {};
 	float xPosition;
 	float yPosition;
 	bool grounded;
 	float xVelocity;
+	bool right_held;
+	bool left_held;
 };
 
 class Graphics;
@@ -47,7 +49,8 @@ public:
 	bool	m_grounded;
 	float	m_playerVelocityX;
 	float	m_playerVelocityY;
-
+	bool	m_rightHeld;
+	bool	m_leftHeld;
 
 private:
 	float	m_accelX;
@@ -56,8 +59,7 @@ private:
 	float	m_accelerationMagY;
 	bool	m_jumping;
 	int		m_frameCounter;
-	bool	m_rightHeld;
-	bool	m_leftHeld;
+
 
 
 };

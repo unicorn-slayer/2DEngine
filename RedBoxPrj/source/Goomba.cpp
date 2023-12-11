@@ -134,7 +134,7 @@ void Goomba::move(const float& elapsedTime)
 
 	if (m_goombaDataQueue.size() < 200)
 	{
-		goombaData goomba(m_x, m_y, m_grounded, m_playerVelocityX);
+		goombaData goomba(m_x, m_y, m_grounded, m_playerVelocityX, m_leftHeld, m_rightHeld);
 
 		m_goombaDataQueue.emplace(goomba);
 	}

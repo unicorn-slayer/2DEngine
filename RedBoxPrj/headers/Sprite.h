@@ -17,6 +17,7 @@ public:
 	float getY();
 	void setX(float x);
 	void setY(float y);
+	Rectangle getBoundingBox();
 
 protected:
 	SDL_Rect m_sourceRect;
