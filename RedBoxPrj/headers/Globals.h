@@ -12,7 +12,7 @@ namespace globals {
 	const float g_centreX = ((g_screenWidth - g_tileWidth) / 2);
 	const float g_centreY = ((g_screenHeight - g_tileHeight) / 2);
 
-	const float g_gravityCap = 0.8f;
+	const float g_gravityCap = 20.0f; //0.8f
 }
 
 namespace sides {

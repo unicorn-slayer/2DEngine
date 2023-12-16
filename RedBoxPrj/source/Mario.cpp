@@ -3,11 +3,11 @@
 
 
 Mario::Mario(Graphics& graphics, float x, float y)
-	: AnimatedSprite(graphics, "goomba.png", 0, 16, 32, 32, x, y, 100)
+	: AnimatedSprite(graphics, "goomba.png", 0, 16, 32, 32, x, y, 5)
 	, m_playerVelocityX(0)
 	, m_playerVelocityY(0)
-	, m_accelerationMagX(0.001f)
-	, m_accelerationMagY(0.002f)
+	, m_accelerationMagX(0.2f)
+	, m_accelerationMagY(0.3f)
 {
 	this->setupAnimation();
 	AnimatedSprite::playAnimation("miniMarioStop");
@@ -16,7 +16,7 @@ Mario::Mario(Graphics& graphics, float x, float y)
 void Mario::update(const float& elapsedTime, const std::vector<Tile>& collisionTiles)
 {
 
-	float maxSpeed = 0.3f;
+	float maxSpeed = 5.0f;
 
 	m_playerVelocityX += m_accelerationMagX * elapsedTime;
 

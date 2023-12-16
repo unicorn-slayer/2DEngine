@@ -21,9 +21,9 @@ void Game::gameLoop()
 	Graphics graphics;
 	Input input;
 	Level level;
+	level.loadMap(graphics, "map.tmx");
 	Rectangle camera = { 0, 0, 700, 700 };
 
-	level.loadMap(graphics, "map.tmx");
 
 	std::vector<Goomba> goombas;
 
@@ -38,9 +38,9 @@ void Game::gameLoop()
 
 	SDL_Event event;
 
-	float delayTime = 3.0f;
+	float delayTime = (1000.0f/60.0f);
 
-	float timeStep = 3.0f;
+	float timeStep = 1.0f;
 
 
 	while (true)
@@ -114,7 +114,7 @@ void Game::updateCharacters(std::vector<Goomba>& goombas, Goomba& cameraGoomba, 
 
 void Game::goombaFollow(std::vector<Goomba>& goombas)
 {
-	constexpr int MAX_POSITIONS = 30;
+	constexpr int MAX_POSITIONS = 3;
 
 	for (int i = 0; i < goombas.size() - 1; ++i) {
 		if (i == goombas.size()-1) {

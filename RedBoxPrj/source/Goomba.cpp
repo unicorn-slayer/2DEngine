@@ -2,11 +2,11 @@
 #include "Goomba.h"
 
 Goomba::Goomba(Graphics& graphics, float x, float y)
-	: AnimatedSprite(graphics, "goomba.png", 0, 0, 32, 32, x, y, 100)
+	: AnimatedSprite(graphics, "goomba.png", 0, 0, 32, 32, x, y, 5)
 	, m_accelX(0)
 	, m_accelY(0)
-	, m_accelerationMagX(0.008f)
-	, m_accelerationMagY(0.002f)
+	, m_accelerationMagX(0.8f) //0.008f
+	, m_accelerationMagY(0.5f) //0.002f //0.5f
 	, m_jumping(false)
 	, m_grounded(false)
 	, m_frameCounter(0)
@@ -41,7 +41,7 @@ void Goomba::handleEvent(SDL_Event& e)
 			if (m_grounded)
 			{
 				m_jumping = true;
- 				m_playerVelocityY = -1.1f;
+ 				m_playerVelocityY = -18.0f;
 				m_grounded = false;
 			}
 			break;
@@ -81,8 +81,6 @@ void Goomba::update(const float& elapsedTime, const std::vector<Tile>& collision
 {
 	this->move(elapsedTime);
 
-	this->updateGoombaDataQueue();
-
 	this->handleCollisions(collisionTiles);
 
 	this->handleScreenBounds(elapsedTime);
@@ -90,12 +88,15 @@ void Goomba::update(const float& elapsedTime, const std::vector<Tile>& collision
 	this->doAnimations();
 
 	this->animationUpdate(elapsedTime);
+
+	this->updateGoombaDataQueue();
+
 }
 
 void Goomba::move(const float& elapsedTime)
 {
 	// move x
-	float maxSpeed = 0.6f;
+	float maxSpeed = 15.0f; /////////////////////////////////////////////////////////////////////
 
 	if (m_leftHeld || m_rightHeld)
 	{
@@ -125,7 +126,7 @@ void Goomba::move(const float& elapsedTime)
 	m_boundingBox._x += m_playerVelocityX * elapsedTime;
 
 	// apply gravity
-	if (m_playerVelocityY < globals::g_gravityCap)
+	if (m_playerVelocityY < globals::g_gravityCap) ///////////////////////////////////////////////////////////
 	{
 		m_playerVelocityY += m_accelerationMagY * elapsedTime;
 	}
