@@ -29,6 +29,8 @@ public:
 
 	void move(const float& elapsedTime);
 
+	void updateGoombaDataQueue();
+
 	void handleCollisions(const std::vector<Tile>& collisionTiles);
 
 	void handleScreenBounds(const float& elapsedTime);
@@ -41,16 +43,23 @@ public:
 
 	void setupAnimation();
 
-	std::queue<float> m_xPositions;
-	std::queue<float> m_yPositions;
+	bool getRightHeld();
+
+	void setRightHeld(const bool rightHeld);
+
+	bool getLeftHeld();
+
+	void setLefttHeld(const bool leftHeld);
+
+	bool getGrounded();
+
+	void setGrounded(const bool grounded);
+
+	float getPlayerVelocityX();
+
+	void setPlayerVelocityX(const float xVel);
 
 	std::queue<goombaData> m_goombaDataQueue;
-
-	bool	m_grounded;
-	float	m_playerVelocityX;
-	float	m_playerVelocityY;
-	bool	m_rightHeld;
-	bool	m_leftHeld;
 
 private:
 	float	m_accelX;
@@ -59,7 +68,9 @@ private:
 	float	m_accelerationMagY;
 	bool	m_jumping;
 	int		m_frameCounter;
-
-
-
+	bool	m_rightHeld;
+	bool	m_leftHeld;
+	float	m_playerVelocityX;
+	float	m_playerVelocityY;
+	bool	m_grounded;
 };

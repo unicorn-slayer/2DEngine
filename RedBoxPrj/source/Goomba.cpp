@@ -81,6 +81,8 @@ void Goomba::update(const float& elapsedTime, const std::vector<Tile>& collision
 {
 	this->move(elapsedTime);
 
+	this->updateGoombaDataQueue();
+
 	this->handleCollisions(collisionTiles);
 
 	this->handleScreenBounds(elapsedTime);
@@ -132,9 +134,17 @@ void Goomba::move(const float& elapsedTime)
 	m_y += (m_playerVelocityY * elapsedTime);
 	m_boundingBox._y += (m_playerVelocityY * elapsedTime);
 
-	if (m_goombaDataQueue.size() < 200)
+
+}
+
+void Goomba::updateGoombaDataQueue()
+{
+	constexpr int MAX_ELEMENTS = 31;
+
+
+	if (m_goombaDataQueue.size() < MAX_ELEMENTS)
 	{
-		goombaData goomba(m_x, m_y, m_grounded, m_playerVelocityX, m_leftHeld, m_rightHeld);
+		goombaData goomba(m_x, m_y, m_grounded, m_playerVelocityX, m_rightHeld, m_leftHeld);
 
 		m_goombaDataQueue.emplace(goomba);
 	}
@@ -309,4 +319,45 @@ void Goomba::setupAnimation()
 {
 	AnimatedSprite::addAnimation(2, 0, 0, "goombaWalk", 16, 16);
 	AnimatedSprite::addAnimation(1, 0, 0, "goombaStop", 16, 16);
+}
+
+bool Goomba::getRightHeld()
+{
+	return m_rightHeld;
+}
+
+void Goomba::setRightHeld(const bool rightHeld)
+{
+	m_rightHeld = rightHeld;
+}
+
+bool Goomba::getLeftHeld()
+{
+
+	return m_leftHeld;
+}
+
+void Goomba::setLefttHeld(const bool leftHeld)
+{
+	m_leftHeld = leftHeld;
+}
+
+bool Goomba::getGrounded()
+{
+	return m_grounded;
+}
+
+void Goomba::setGrounded(const bool grounded)
+{
+	m_grounded = grounded;
+}
+
+float Goomba::getPlayerVelocityX()
+{
+	return m_playerVelocityX;
+}
+
+void Goomba::setPlayerVelocityX(const float xVel)
+{
+	m_playerVelocityX = xVel;
 }
