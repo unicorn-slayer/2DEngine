@@ -7,13 +7,14 @@
 
 struct goombaData
 {
-	goombaData(float x, float y, bool grounded, float xVelocity, bool right_held, bool left_held) : xPosition(x), yPosition(y), grounded(grounded), xVelocity(xVelocity), right_held(right_held), left_held(left_held) {};
+	goombaData(float x, float y, bool grounded, float xVelocity, bool right_held, bool left_held, float accelX) : xPosition(x), yPosition(y), grounded(grounded), xVelocity(xVelocity), right_held(right_held), left_held(left_held), accelX(accelX) {};
 	float xPosition;
 	float yPosition;
 	bool grounded;
 	float xVelocity;
 	bool right_held;
 	bool left_held;
+	float accelX;
 };
 
 class Graphics;
@@ -59,10 +60,15 @@ public:
 
 	void setPlayerVelocityX(const float xVel);
 
+	float getPlayerAccelX();
+
+	void setPlayerAccelX(const float accelX);
+
 	std::queue<goombaData> m_goombaDataQueue;
 
-private:
 	float	m_accelX;
+
+private:
 	float	m_accelY;
 	float	m_accelerationMagX;
 	float	m_accelerationMagY;

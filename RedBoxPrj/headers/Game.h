@@ -23,6 +23,8 @@ public:
 
 	void animationUpdate(std::vector<Goomba>& goombas, Mario& mario, float& timeStep);
 
+	void focusCamera(std::vector<Goomba>& goombas, Goomba& cameraGoomba);
+
 	void drawCharacters(std::vector<Goomba>& goombas, Mario& mario, Graphics& graphics, Rectangle& camera);
 
 

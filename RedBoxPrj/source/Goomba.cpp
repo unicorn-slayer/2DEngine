@@ -145,7 +145,7 @@ void Goomba::updateGoombaDataQueue()
 
 	if (m_goombaDataQueue.size() < MAX_ELEMENTS)
 	{
-		goombaData goomba(m_x, m_y, m_grounded, m_playerVelocityX, m_rightHeld, m_leftHeld);
+		goombaData goomba(m_x, m_y, m_grounded, m_playerVelocityX, m_rightHeld, m_leftHeld, m_accelX);
 
 		m_goombaDataQueue.emplace(goomba);
 	}
@@ -361,4 +361,14 @@ float Goomba::getPlayerVelocityX()
 void Goomba::setPlayerVelocityX(const float xVel)
 {
 	m_playerVelocityX = xVel;
+}
+
+float Goomba::getPlayerAccelX()
+{
+	return m_accelX;
+}
+
+void Goomba::setPlayerAccelX(const float accelX)
+{
+	m_accelX = accelX;
 }

@@ -65,6 +65,8 @@ void Game::gameLoop()
 
 		this->animationUpdate(goombas, mario, timeStep);
 
+		this->focusCamera(goombas, cameraGoomba);
+
 		graphics.clear();
 
 		level.draw(graphics, camera);
@@ -134,10 +136,11 @@ void Game::goombaFollow(std::vector<Goomba>& goombas)
 			nextGoomba.setPlayerVelocityX(goombaDataQueue.front().xVelocity);
 			nextGoomba.setLefttHeld(goombaDataQueue.front().left_held);
 			nextGoomba.setRightHeld(goombaDataQueue.front().right_held);
+			nextGoomba.setPlayerAccelX(goombaDataQueue.front().accelX);
 
 			if (nextGoomba.m_goombaDataQueue.size() < (MAX_POSITIONS + 1))
 			{
-				nextGoomba.m_goombaDataQueue.emplace(nextGoomba.getX(), nextGoomba.getY(), nextGoomba.getGrounded(), nextGoomba.getPlayerVelocityX(), nextGoomba.getRightHeld(), nextGoomba.getLeftHeld());
+				nextGoomba.m_goombaDataQueue.emplace(nextGoomba.getX(), nextGoomba.getY(), nextGoomba.getGrounded(), nextGoomba.getPlayerVelocityX(), nextGoomba.getRightHeld(), nextGoomba.getLeftHeld(), nextGoomba.getPlayerAccelX());
 			}
 
 			goombaDataQueue.pop();
@@ -175,6 +178,22 @@ void Game::animationUpdate(std::vector<Goomba>& goombas, Mario& mario, float& ti
 	mario.doAnimations();
 
 	mario.animationUpdate(timeStep);
+}
+
+void Game::focusCamera(std::vector<Goomba>& goombas, Goomba& cameraGoomba)
+{
+	if (goombas.size())
+	{
+		if (cameraGoomba.getX() > goombas[0].getX() + 75)
+		{
+			cameraGoomba.setX(goombas[0].getX() + 75);
+		}
+
+		if (cameraGoomba.getX() < goombas[0].getX() - 75)
+		{
+			cameraGoomba.setX(goombas[0].getX() - 75);
+		}
+	}
 }
 
 void Game::drawCharacters(std::vector<Goomba>& goombas, Mario& mario, Graphics& graphics, Rectangle& camera)
