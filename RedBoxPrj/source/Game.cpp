@@ -9,6 +9,8 @@
 #include <iostream>
 #include <algorithm>
 #include "Mario.h"
+#include "Luigi.h"
+#include "fireballs.h"
 
 Game::Game()
 {
@@ -34,7 +36,12 @@ void Game::gameLoop()
 
 	Goomba cameraGoomba(graphics, globals::g_centreX, globals::g_centreY - 300);
 
+	std::vector<Fireballs> fireballs;
+
+
 	Mario mario(graphics, globals::g_centreX - 200, globals::g_centreY - 300);
+	Luigi luigi(graphics, globals::g_centreX - 300, globals::g_centreY - 300, fireballs);
+
 
 	SDL_Event event;
 
@@ -59,11 +66,11 @@ void Game::gameLoop()
 
 		cameraGoomba.setCamera(camera);
 
-		this->updateCharacters(goombas, cameraGoomba, mario, level.getCollisionTiles(), timeStep);
+		this->updateEntities(goombas, cameraGoomba, mario, luigi, fireballs, level.getCollisionTiles(), timeStep, graphics);
 
-		this->checkEnemyCollisions(mario, goombas);
+		this->checkCollisions(mario, luigi, goombas, fireballs, level.getCollisionTiles());
 
-		this->animationUpdate(goombas, mario, timeStep);
+		this->animationUpdate(goombas, mario, luigi, fireballs, timeStep);
 
 		this->focusCamera(goombas, cameraGoomba);
 
@@ -71,7 +78,7 @@ void Game::gameLoop()
 
 		level.draw(graphics, camera);
 
-		this->drawCharacters(goombas, mario, graphics, camera);
+		this->drawEntities(goombas, mario, luigi, fireballs, graphics, camera);
 
 		graphics.flip();
 
@@ -97,9 +104,11 @@ void Game::handleEvents(std::vector<Goomba>& goombas, Goomba& cameraGoomba, SDL_
 	cameraGoomba.handleEvent(event);
 }
 
-void Game::updateCharacters(std::vector<Goomba>& goombas, Goomba& cameraGoomba, Mario& mario, const std::vector<Tile>& tiles, float& timeStep)
+void Game::updateEntities(std::vector<Goomba>& goombas, Goomba& cameraGoomba, Mario& mario, Luigi& luigi, std::vector<Fireballs>& fireballs, const std::vector<Tile>& tiles, float& timeStep, Graphics& graphics)
 {
 	mario.update(timeStep, tiles);
+
+	luigi.update(timeStep, tiles, graphics);
 
 	if (goombas.size())
 	{
@@ -111,6 +120,14 @@ void Game::updateCharacters(std::vector<Goomba>& goombas, Goomba& cameraGoomba, 
 	if (goombas.size())
 	{
 		this->goombaFollow(goombas);
+	}
+
+	if (fireballs.size())
+	{
+		for (int i = 0; i < fireballs.size(); i++)
+		{
+			fireballs[i].update(timeStep, tiles);
+		}
 	}
 }
 
@@ -149,7 +166,7 @@ void Game::goombaFollow(std::vector<Goomba>& goombas)
 	}
 }
 
-void Game::checkEnemyCollisions(Mario& mario, std::vector<Goomba>& goombas)
+void Game::checkCollisions(Mario& mario, Luigi& luigi, std::vector<Goomba>& goombas, std::vector<Fireballs>& fireballs, const std::vector<Tile>& tiles)
 {
 	if (goombas.size() > 0)
 	{
@@ -160,10 +177,55 @@ void Game::checkEnemyCollisions(Mario& mario, std::vector<Goomba>& goombas)
 				goombas.erase(goombas.begin() + i);
 			}
 		}
+
+		for (int i = 0; i < goombas.size(); i++)
+		{
+			if (goombas[i].getBoundingBox().checkCollision(luigi.getBoundingBox()))
+			{
+				goombas.erase(goombas.begin() + i);
+			}
+		}
+
+		for (int i = 0; i < goombas.size(); i++)
+		{
+			if (fireballs.size())
+			{
+				for (int j = (int)fireballs.size() - 1; j >= 0; j--)
+				{
+					if (goombas[i].getBoundingBox().checkCollision(fireballs[j].getBoundingBox()))
+					{
+						goombas.erase(goombas.begin() + i);
+
+						fireballs.erase(fireballs.begin() + j);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	if (fireballs.size())
+	{
+		// reverse iteration due to modifying a vector whilest indexing through it.
+		for (int i = (int)fireballs.size() - 1; i >= 0; i--)
+		{
+			for (int j = 0; j < tiles.size(); j++)
+			{
+				if (fireballs[i].getBoundingBox().checkCollision(tiles[j].boundingBox))
+				{
+					if (fireballs[i].getBoundingBox().getCollisionSide(tiles[j].boundingBox) == sides::LEFT || fireballs[i].getBoundingBox().getCollisionSide(tiles[j].boundingBox) == sides::RIGHT)
+					{
+						fireballs.erase(fireballs.begin() + i);
+						break;
+					}
+
+				}
+			}
+		}
 	}
 }
 
-void Game::animationUpdate(std::vector<Goomba>& goombas, Mario& mario, float& timeStep)
+void Game::animationUpdate(std::vector<Goomba>& goombas, Mario& mario, Luigi& luigi, std::vector<Fireballs>& fireballs, float& timeStep)
 {
 	if (goombas.size() > 1)
 	{
@@ -178,6 +240,21 @@ void Game::animationUpdate(std::vector<Goomba>& goombas, Mario& mario, float& ti
 	mario.doAnimations();
 
 	mario.animationUpdate(timeStep);
+
+	luigi.doAnimations();
+
+	luigi.animationUpdate(timeStep);
+
+	if (fireballs.size())
+	{
+		for (int i = 0; i < fireballs.size(); i++)
+		{
+			fireballs[i].doAnimations();
+
+			fireballs[i].animationUpdate(timeStep);
+		}
+	}
+
 }
 
 void Game::focusCamera(std::vector<Goomba>& goombas, Goomba& cameraGoomba)
@@ -196,7 +273,7 @@ void Game::focusCamera(std::vector<Goomba>& goombas, Goomba& cameraGoomba)
 	}
 }
 
-void Game::drawCharacters(std::vector<Goomba>& goombas, Mario& mario, Graphics& graphics, Rectangle& camera)
+void Game::drawEntities(std::vector<Goomba>& goombas, Mario& mario, Luigi& luigi, std::vector<Fireballs>& fireballs, Graphics& graphics, Rectangle& camera)
 {
 	if (goombas.size())
 	{
@@ -207,4 +284,15 @@ void Game::drawCharacters(std::vector<Goomba>& goombas, Mario& mario, Graphics& 
 	}
 
 	mario.draw(graphics, camera);
+
+	luigi.draw(graphics, camera);
+
+	if (fireballs.size())
+	{
+		for (int i = 0; i < fireballs.size(); i++)
+		{
+			fireballs[i].draw(graphics, camera);
+		}
+	}
+
 }

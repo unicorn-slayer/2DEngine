@@ -5,6 +5,10 @@ class Goomba;
 
 class Mario;
 
+class Luigi;
+
+class Fireballs;
+
 class Game
 {
 public:
@@ -15,17 +19,17 @@ public:
 
 	void handleEvents(std::vector<Goomba>& goombas, Goomba& cameraGoomba, SDL_Event& event);
 
-	void updateCharacters(std::vector<Goomba>& goombas, Goomba& cameraGoomba, Mario& mario, const std::vector<Tile>& tiles, float& timeStep);
+	void updateEntities(std::vector<Goomba>& goombas, Goomba& cameraGoomba, Mario& mario, Luigi& luigi, std::vector<Fireballs>& fireballs, const std::vector<Tile>& tiles, float& timeStep, Graphics& graphics);
 
 	void goombaFollow(std::vector<Goomba>& goombas);
 
-	void checkEnemyCollisions(Mario& mario, std::vector<Goomba>& goombas);
-
-	void animationUpdate(std::vector<Goomba>& goombas, Mario& mario, float& timeStep);
+	void checkCollisions(Mario& mario, Luigi& luigi, std::vector<Goomba>& goombas, std::vector<Fireballs>& fireballs, const std::vector<Tile>& tiles);
+	
+	void animationUpdate(std::vector<Goomba>& goombas, Mario& mario, Luigi& luigi, std::vector<Fireballs>& fireballs, float& timeStep);
 
 	void focusCamera(std::vector<Goomba>& goombas, Goomba& cameraGoomba);
 
-	void drawCharacters(std::vector<Goomba>& goombas, Mario& mario, Graphics& graphics, Rectangle& camera);
+	void drawEntities(std::vector<Goomba>& goombas, Mario& mario, Luigi& luigi, std::vector<Fireballs>& fireballs, Graphics& graphics, Rectangle& camera);
 
 
 private:

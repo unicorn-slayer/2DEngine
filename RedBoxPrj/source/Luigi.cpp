@@ -1,18 +1,23 @@
-#include "Mario.h"
+#include "Luigi.h"
 #include <algorithm>
+#include "fireballs.h"
 
-Mario::Mario(Graphics& graphics, float x, float y)
-	: AnimatedSprite(graphics, "goomba.png", 16, 16, 0, 16, 32, 32, x, y, 5)
+
+Luigi::Luigi(Graphics& graphics, float x, float y, std::vector<Fireballs>& fireballs)
+	: AnimatedSprite(graphics, "goomba.png", 16, 32, 0, 48, 32, 64, x, y, 5)
 	, m_playerVelocityX(0)
 	, m_playerVelocityY(0)
 	, m_accelerationMagX(0.2f)
 	, m_accelerationMagY(0.3f)
+	, m_fireballs(fireballs)
+	, m_frameCounter(0)
+
 {
 	this->setupAnimation();
-	AnimatedSprite::playAnimation("miniMarioStop");
+	AnimatedSprite::playAnimation("bigLuigiRight");
 }
 
-void Mario::update(const float& elapsedTime, const std::vector<Tile>& collisionTiles)
+void Luigi::update(const float& elapsedTime, const std::vector<Tile>& collisionTiles, Graphics& graphics)
 {
 
 	float maxSpeed = 5.0f;
@@ -37,9 +42,11 @@ void Mario::update(const float& elapsedTime, const std::vector<Tile>& collisionT
 
 	this->handleCollisions(collisionTiles);
 
+	this->launchFireball(graphics);
+
 }
 
-void Mario::handleCollisions(const std::vector<Tile>& collisionTiles)
+void Luigi::handleCollisions(const std::vector<Tile>& collisionTiles)
 {
 
 	std::vector<Tile> collisionTilesActive;
@@ -61,8 +68,8 @@ void Mario::handleCollisions(const std::vector<Tile>& collisionTiles)
 		{
 		case sides::TOP:
 			m_playerVelocityY = 0;
-			Sprite::m_y = tile.boundingBox._y + Sprite::m_height + 1;
-			Sprite::m_boundingBox._y = tile.boundingBox._y + Sprite::m_height + 1;
+			Sprite::m_y = tile.boundingBox._y + Sprite::m_height;
+			Sprite::m_boundingBox._y = tile.boundingBox._y + Sprite::m_height;
 			break;
 
 		case sides::BOTTOM:
@@ -84,27 +91,27 @@ void Mario::handleCollisions(const std::vector<Tile>& collisionTiles)
 	}
 }
 
-void Mario::doAnimations()
+void Luigi::doAnimations()
 {
 	if (m_playerVelocityX != 0)
 	{
 		if (m_playerVelocityX > 0)
 		{
-			AnimatedSprite::playAnimation("miniMarioRight");
+			AnimatedSprite::playAnimation("bigLuigiRight");
 		}
 		else
 		{
-			AnimatedSprite::playAnimation("miniMarioLeft");
+			AnimatedSprite::playAnimation("bigLuigiLeft");
 		}
 
 	}
 	else
 	{
-		AnimatedSprite::playAnimation("miniMarioStop");
+		AnimatedSprite::playAnimation("bigLuigiRight");
 	}
 }
 
-void Mario::draw(Graphics& graphics, Rectangle& camera)
+void Luigi::draw(Graphics& graphics, Rectangle& camera)
 {
 	SDL_Rect destRect = { (int)Sprite::m_x, (int)Sprite::m_y, Sprite::m_width, Sprite::m_height };
 
@@ -115,9 +122,27 @@ void Mario::draw(Graphics& graphics, Rectangle& camera)
 	AnimatedSprite::animateDraw(graphics, (int)destRect.x, (int)destRect.y, destRect.w, destRect.h);
 }
 
-void Mario::setupAnimation()
+void Luigi::setupAnimation()
 {
-	AnimatedSprite::addAnimation(4, 0, 16, "miniMarioRight", 16, 16);
-	AnimatedSprite::addAnimation(4, 0, 32, "miniMarioLeft", 16, 16);
-	AnimatedSprite::addAnimation(1, 0, 16, "miniMarioStop", 16, 16);
+	AnimatedSprite::addAnimation(3, 0, 48, "bigLuigiRight", Sprite::m_sourceRect.w, Sprite::m_sourceRect.h);
+	AnimatedSprite::addAnimation(3, 0, 80, "bigLuigiLeft", Sprite::m_sourceRect.w, Sprite::m_sourceRect.h);
+}
+
+void Luigi::launchFireball(Graphics& graphics)
+{
+	if (m_frameCounter == 10)
+	{
+		if (m_playerVelocityX > 0)
+		{
+			m_fireballs.push_back(Fireballs(graphics, m_x, m_y + 48, right));
+		}
+		else
+		{
+			m_fireballs.push_back(Fireballs(graphics, m_x, m_y + 48, left));
+		}
+
+		m_frameCounter = 0;
+	}
+
+	m_frameCounter++;
 }

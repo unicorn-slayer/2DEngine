@@ -13,7 +13,7 @@ public:
 	Rectangle(float x, float y, int width, int height);
 
 	bool checkCollision(const Rectangle& rect);
-	sides::Side getCollisionSide(Rectangle& other);
+	sides::Side getCollisionSide(const Rectangle& other);
 
 	float _x;
 	float _y;

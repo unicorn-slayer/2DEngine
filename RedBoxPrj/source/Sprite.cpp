@@ -1,11 +1,12 @@
 #include "Sprite.h"
 
-Sprite::Sprite(Graphics& graphics, const std::string& filePath, int sourceX, int sourceY, int width, int height, float x, float y) : m_x(x), m_y(y)
+Sprite::Sprite(Graphics& graphics, const std::string& filePath,  int sourceWidth, int sourceHeight, int sourceX, int sourceY, int width, int height, float x, float y) : m_x(x), m_y(y), m_width(width), m_height(height)
 {
 	m_sourceRect.x = sourceX;
 	m_sourceRect.y = sourceY;
-	m_sourceRect.w = width;
-	m_sourceRect.x = height;
+	m_sourceRect.w = sourceWidth;
+	m_sourceRect.h = sourceHeight;
+
 
 	m_spriteSheet = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(filePath));
 	m_boundingBox = Rectangle(x, y, width, height);
@@ -17,9 +18,9 @@ void Sprite::update()
 	m_boundingBox._y = m_y;
 }
 
-void Sprite::draw(Graphics& graphics, int x, int y)
+void Sprite::draw(Graphics& graphics, int x, int y, int width, int height)
 {
-	SDL_Rect destinationRectangle = { x, y, m_sourceRect.w, m_sourceRect.h};
+	SDL_Rect destinationRectangle = { x, y, width, height};
 	graphics.blitSurface(m_spriteSheet, &m_sourceRect, &destinationRectangle);
 
 }

@@ -66,7 +66,7 @@ public:
 
 	std::queue<goombaData> m_goombaDataQueue;
 
-	float	m_accelX;
+
 
 private:
 	float	m_accelY;
@@ -79,4 +79,5 @@ private:
 	float	m_playerVelocityX;
 	float	m_playerVelocityY;
 	bool	m_grounded;
+	float	m_accelX;
 };

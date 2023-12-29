@@ -2,11 +2,11 @@
 #include "Goomba.h"
 
 Goomba::Goomba(Graphics& graphics, float x, float y)
-	: AnimatedSprite(graphics, "goomba.png", 0, 0, 32, 32, x, y, 5)
+	: AnimatedSprite(graphics, "goomba.png", 16, 16, 0, 0, 32, 32, x, y, 5)
 	, m_accelX(0)
 	, m_accelY(0)
-	, m_accelerationMagX(0.8f) //0.008f
-	, m_accelerationMagY(0.5f) //0.002f //0.5f
+	, m_accelerationMagX(0.8f)
+	, m_accelerationMagY(0.5f)
 	, m_jumping(false)
 	, m_grounded(false)
 	, m_frameCounter(0)
@@ -96,7 +96,7 @@ void Goomba::update(const float& elapsedTime, const std::vector<Tile>& collision
 void Goomba::move(const float& elapsedTime)
 {
 	// move x
-	float maxSpeed = 15.0f; /////////////////////////////////////////////////////////////////////
+	float maxSpeed = 15.0f;
 
 	if (m_leftHeld || m_rightHeld)
 	{
@@ -126,7 +126,7 @@ void Goomba::move(const float& elapsedTime)
 	m_boundingBox._x += m_playerVelocityX * elapsedTime;
 
 	// apply gravity
-	if (m_playerVelocityY < globals::g_gravityCap) ///////////////////////////////////////////////////////////
+	if (m_playerVelocityY < globals::g_gravityCap)
 	{
 		m_playerVelocityY += m_accelerationMagY * elapsedTime;
 	}
@@ -174,27 +174,27 @@ void Goomba::handleCollisions(const std::vector<Tile>& collisionTiles)
 			{
 			case sides::TOP:
 				m_playerVelocityY = 0;
-				Sprite::m_y = tile.boundingBox._y + globals::g_tileHeight + 1;
-				Sprite::m_boundingBox._y = tile.boundingBox._y + globals::g_tileHeight + 1;
+				Sprite::m_y = tile.boundingBox._y + Sprite::m_height + 1;
+				Sprite::m_boundingBox._y = tile.boundingBox._y + Sprite::m_height + 1;
 				break;
 
 			case sides::BOTTOM:
-				Sprite::m_y = tile.boundingBox._y - globals::g_tileHeight;
-				Sprite::m_boundingBox._y = tile.boundingBox._y - globals::g_tileHeight;
+				Sprite::m_y = tile.boundingBox._y - Sprite::m_height;
+				Sprite::m_boundingBox._y = tile.boundingBox._y - Sprite::m_height;
 				m_playerVelocityY = 0;
 				m_grounded = true;
 				m_frameCounter = 0;
 				break;
 
 			case sides::LEFT:
-				Sprite::m_x = (tile.boundingBox._x + tile.boundingBox._width) + 2;
-				Sprite::m_boundingBox._x = (tile.boundingBox._x + tile.boundingBox._width) + 2;
+				Sprite::m_x = (tile.boundingBox._x + Sprite::m_width) + 2;
+				Sprite::m_boundingBox._x = (tile.boundingBox._x + Sprite::m_width) + 2;
 				m_playerVelocityX = 0;
 				break;
 
 			case sides::RIGHT:
-				Sprite::m_x = (tile.boundingBox._x - this->m_boundingBox._width) - 2;
-				Sprite::m_boundingBox._x = (tile.boundingBox._x - this->m_boundingBox._width) - 2;
+				Sprite::m_x = (tile.boundingBox._x - Sprite::m_width) - 2;
+				Sprite::m_boundingBox._x = (tile.boundingBox._x - Sprite::m_width) - 2;
 				m_playerVelocityX = 0;
 				break;
 			}
@@ -225,8 +225,8 @@ void Goomba::handleCollisions(const std::vector<Tile>& collisionTiles)
 //handles screen going out of bounds
 void Goomba::handleScreenBounds(const float& elapsedTime)
 {
-	float max_x = globals::g_mapWidth - globals::g_tileWidth;
-	float max_y = globals::g_mapHeight - globals::g_tileHeight;
+	float max_x = globals::g_mapWidth - (float)Sprite::m_width;
+	float max_y = globals::g_mapHeight - (float)Sprite::m_height;
 
 	// handle screen out of bounds in x
 	if (Sprite::m_x < 0)
@@ -261,20 +261,20 @@ void Goomba::handleScreenBounds(const float& elapsedTime)
 
 void Goomba::draw(Graphics& graphics, Rectangle& camera)
 {
-	SDL_Rect destRect = { (int)Sprite::m_x, (int)Sprite::m_y, globals::g_tileWidth, globals::g_tileHeight };
+	SDL_Rect destRect = { (int)Sprite::m_x, (int)Sprite::m_y, Sprite::m_width, Sprite::m_height };
 
 	//when drawing, need to offset the redBox by the camera distance
 	destRect.x = destRect.x - (int)camera._x;
 	destRect.y = destRect.y - (int)camera._y;
 
-	AnimatedSprite::animateDraw(graphics, (int)destRect.x, (int)destRect.y);
+	AnimatedSprite::animateDraw(graphics, (int)destRect.x, (int)destRect.y, destRect.w, destRect.h);
 }
 
 void Goomba::setCamera(Rectangle& camera)
 {
 	//Center the camera over the dot, 700 is screen width
-	camera._x = (Sprite::m_boundingBox._x + (globals::g_tileWidth / 2)) - (globals::g_screenWidth / 2);
-	camera._y = (Sprite::m_boundingBox._y + (globals::g_tileHeight / 2)) - (globals::g_screenHeight / 2);
+	camera._x = (Sprite::m_boundingBox._x + (Sprite::m_width / 2)) - (globals::g_screenWidth / 2);
+	camera._y = (Sprite::m_boundingBox._y + (Sprite::m_height / 2)) - (globals::g_screenHeight / 2);
 
 	//Keep the camera in bounds
 	if (camera._x < 0)

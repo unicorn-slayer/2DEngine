@@ -1,8 +1,8 @@
 #include "AnimatedSprite.h"
 
 
-AnimatedSprite::AnimatedSprite(Graphics& graphics, const std::string& filePath, int sourceX, int sourceY, int width, int height, float x, float y, float timeToUpdate)
-	: Sprite(graphics, filePath, sourceX, sourceY, width, height, x, y)
+AnimatedSprite::AnimatedSprite(Graphics& graphics, const std::string& filePath, int sourceWidth, int sourceHeight, int sourceX, int sourceY, int width, int height, float x, float y, float timeToUpdate)
+	: Sprite(graphics, filePath, sourceWidth, sourceHeight, sourceX, sourceY, width, height, x, y)
 	, m_currentAnimation("")
 	, m_frameIndex(0)
 	, m_timeToUpdate(timeToUpdate)
@@ -46,13 +46,13 @@ void AnimatedSprite::animationUpdate(float elapsedTime)
 	}
 }
 
-void AnimatedSprite::animateDraw(Graphics& graphics, int x, int y)
+void AnimatedSprite::animateDraw(Graphics& graphics, int x, int y, int width, int height)
 {
 	SDL_Rect destinationRectangle = {};
 	destinationRectangle.x = x;
 	destinationRectangle.y = y;
-	destinationRectangle.w = globals::g_tileWidth;
-	destinationRectangle.h = globals::g_tileHeight;
+	destinationRectangle.w = width;
+	destinationRectangle.h = height;
 
 	SDL_Rect sourceRect = m_animations[m_currentAnimation][m_frameIndex];
 	graphics.blitSurface(m_spriteSheet, &sourceRect, &destinationRectangle);

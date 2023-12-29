@@ -11,7 +11,7 @@ class AnimatedSprite : public Sprite
 {
 public:
 
-	AnimatedSprite(Graphics& graphics, const std::string& filePath, int sourceX, int sourceY, int width, int height, float x, float y, float timeToUpdate);
+	AnimatedSprite(Graphics& graphics, const std::string& filePath, int sourceWidth, int sourceHeight, int sourceX, int sourceY, int width, int height, float x, float y, float timeToUpdate);
 
 	void addAnimation(int frames, int x, int y, std::string name, int width, int height);
 
@@ -19,7 +19,7 @@ public:
 
 	void animationUpdate(float elapsedTime);
 
-	void animateDraw(Graphics& graphics, int x, int y);
+	void animateDraw(Graphics& graphics, int x, int y, int width, int height);
 
 protected:
 	std::string m_currentAnimation;

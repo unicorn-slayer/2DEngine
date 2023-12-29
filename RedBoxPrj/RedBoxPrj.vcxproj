@@ -161,11 +161,13 @@
   <ItemGroup>
     <ClCompile Include="source\AnimatedSprite.cpp" />
     <ClCompile Include="headers\AnimatedSprite.h" />
+    <ClCompile Include="source\Fireballs.cpp" />
     <ClCompile Include="source\Game.cpp" />
     <ClCompile Include="source\Goomba.cpp" />
     <ClCompile Include="source\Graphics.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Level.cpp" />
+    <ClCompile Include="source\Luigi.cpp" />
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\Mario.cpp" />
     <ClCompile Include="source\Rectangle.cpp" />
@@ -175,12 +177,14 @@
     <ClCompile Include="source\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\Fireballs.h" />
     <ClInclude Include="headers\Game.h" />
     <ClInclude Include="headers\Globals.h" />
     <ClInclude Include="headers\Goomba.h" />
     <ClInclude Include="headers\Graphics.h" />
     <ClInclude Include="headers\Input.h" />
     <ClInclude Include="headers\Level.h" />
+    <ClInclude Include="headers\Luigi.h" />
     <ClInclude Include="headers\Mario.h" />
     <ClInclude Include="headers\Rectangle.h" />
     <ClInclude Include="headers\RedBox.h" />

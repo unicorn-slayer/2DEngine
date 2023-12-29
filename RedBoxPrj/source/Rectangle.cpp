@@ -53,7 +53,7 @@ bool Rectangle::checkCollision(const Rectangle& rect)
     return true;
 }
 
-sides::Side Rectangle::getCollisionSide(Rectangle& other)
+sides::Side Rectangle::getCollisionSide(const Rectangle& other)
 {
     float amtRight, amtLeft, amtTop, amtBottom;
     amtRight = (_x + _width) - other._x;
