@@ -174,27 +174,27 @@ void Goomba::handleCollisions(const std::vector<Tile>& collisionTiles)
 			{
 			case sides::TOP:
 				m_playerVelocityY = 0;
-				Sprite::m_y = tile.boundingBox._y + Sprite::m_height + 1;
+				Sprite::m_y = tile.boundingBox._y + tile.boundingBox._height + 1;
 				Sprite::m_boundingBox._y = tile.boundingBox._y + Sprite::m_height + 1;
 				break;
 
 			case sides::BOTTOM:
-				Sprite::m_y = tile.boundingBox._y - Sprite::m_height;
-				Sprite::m_boundingBox._y = tile.boundingBox._y - Sprite::m_height;
+				Sprite::m_y = tile.boundingBox._y - tile.boundingBox._height - 1;
+				Sprite::m_boundingBox._y = tile.boundingBox._y - Sprite::m_height - 1;
 				m_playerVelocityY = 0;
 				m_grounded = true;
 				m_frameCounter = 0;
 				break;
 
 			case sides::LEFT:
-				Sprite::m_x = (tile.boundingBox._x + Sprite::m_width) + 2;
-				Sprite::m_boundingBox._x = (tile.boundingBox._x + Sprite::m_width) + 2;
+				Sprite::m_x = (tile.boundingBox._x + tile.boundingBox._width) + 1;
+				Sprite::m_boundingBox._x = (tile.boundingBox._x + Sprite::m_width) + 1;
 				m_playerVelocityX = 0;
 				break;
 
 			case sides::RIGHT:
-				Sprite::m_x = (tile.boundingBox._x - Sprite::m_width) - 2;
-				Sprite::m_boundingBox._x = (tile.boundingBox._x - Sprite::m_width) - 2;
+				Sprite::m_x = (tile.boundingBox._x - globals::g_tileWidth) - 1;
+				Sprite::m_boundingBox._x = (tile.boundingBox._x - Sprite::m_width) - 1;
 				m_playerVelocityX = 0;
 				break;
 			}

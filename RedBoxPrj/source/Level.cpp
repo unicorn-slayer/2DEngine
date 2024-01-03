@@ -182,8 +182,8 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
         }
     }
 
-    if (objectgroup)
-    {
+
+    while (objectgroup) {
         int groupId;
         objectgroup->QueryIntAttribute("id", &groupId);
 
@@ -199,7 +199,65 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
                 m_collisionTiles.push_back(tile);
                 object = object->NextSiblingElement("object");
             }
+
+            objectgroup = objectgroup->NextSiblingElement("objectgroup");
+            objectgroup->QueryIntAttribute("id", &groupId);
+
         }
+
+        if (groupId == 4) {
+            // Iterate through objects within the objectgroup
+            tinyxml2::XMLElement* object = objectgroup->FirstChildElement("object");
+            while (object != nullptr) {
+                int x = 0;
+                int y = 0;
+                object->QueryIntAttribute("x", &x);
+                object->QueryIntAttribute("y", &y);
+                m_marioSpawnPoints.push_back({x, y});
+                object = object->NextSiblingElement("object");
+            }
+
+            objectgroup = objectgroup->NextSiblingElement("objectgroup");
+            objectgroup->QueryIntAttribute("id", &groupId);
+
+        }
+
+        if (groupId == 6) {
+            // Iterate through objects within the objectgroup
+            tinyxml2::XMLElement* object = objectgroup->FirstChildElement("object");
+            while (object != nullptr) {
+                int x = 0;
+                int y = 0;
+                object->QueryIntAttribute("x", &x);
+                object->QueryIntAttribute("y", &y);
+                m_jumpingMarioSpawnPoints.push_back({ x, y });
+                object = object->NextSiblingElement("object");
+            }
+
+            objectgroup = objectgroup->NextSiblingElement("objectgroup");
+            objectgroup->QueryIntAttribute("id", &groupId);
+
+        }
+
+        if (groupId == 5) {
+            // Iterate through objects within the objectgroup
+            tinyxml2::XMLElement* object = objectgroup->FirstChildElement("object");
+            while (object != nullptr) {
+                int x = 0;
+                int y = 0;
+                object->QueryIntAttribute("x", &x);
+                object->QueryIntAttribute("y", &y);
+                m_luigiSpawnPoints.push_back({ x, y });
+                object = object->NextSiblingElement("object");
+            }
+
+            //objectgroup = objectgroup->NextSiblingElement("objectgroup");
+            //objectgroup->QueryIntAttribute("id", &groupId);
+
+        }
+
+        break;
+
     }
 
 
@@ -223,4 +281,19 @@ void Level::draw(Graphics& graphics, Rectangle& camera)
 std::vector<Tile> Level::getCollisionTiles()
 {
     return m_collisionTiles;
+}
+
+std::vector<std::pair<int, int>> Level::getMarioSpawnPoints()
+{
+    return m_marioSpawnPoints;
+}
+
+std::vector<std::pair<int, int>> Level::getLuigiSpawnPoints()
+{
+    return m_luigiSpawnPoints;
+}
+
+std::vector<std::pair<int, int>> Level::getJumpingMarioSpawnPoints()
+{
+    return m_jumpingMarioSpawnPoints;
 }

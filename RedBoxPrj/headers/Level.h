@@ -22,6 +22,9 @@ public:
 	void loadMap(Graphics& graphics, const std::string& file);
 	void draw(Graphics& graphics, Rectangle& camera);
 	std::vector<Tile> getCollisionTiles();
+	std::vector<std::pair<int, int>> getMarioSpawnPoints();
+	std::vector<std::pair<int, int>> getLuigiSpawnPoints();
+	std::vector<std::pair<int, int>> getJumpingMarioSpawnPoints();
 
 private:
 	std::vector<int> m_numbers;
@@ -29,6 +32,9 @@ private:
 	std::vector<SDL_Rect> m_tilesetSourceRects;
 	std::vector<Tile> m_tiles;
 	std::vector<Tile> m_collisionTiles;
+	std::vector<std::pair<int, int>> m_marioSpawnPoints;
+	std::vector<std::pair<int, int>> m_luigiSpawnPoints;
+	std::vector<std::pair<int, int>> m_jumpingMarioSpawnPoints;
 	int m_tileCount;
 	int m_tilesetWidth;
 	int m_tileWidth;
