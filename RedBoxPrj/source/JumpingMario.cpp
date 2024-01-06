@@ -16,7 +16,7 @@ JumpingMario::JumpingMario(Graphics& graphics, float x, float y)
 	AnimatedSprite::playAnimation("jumpRight");
 }
 
-void JumpingMario::update(const float& elapsedTime, const std::vector<Tile>& collisionTiles, Graphics& graphics)
+void JumpingMario::update(const float& elapsedTime, const std::vector<Tile>& collisionTiles)
 {
 
 	float maxSpeed = 5.0f;

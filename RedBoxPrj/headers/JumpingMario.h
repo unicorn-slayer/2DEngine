@@ -11,7 +11,7 @@ class JumpingMario : public AnimatedSprite
 public:
 	JumpingMario(Graphics& graphics, float x, float y);
 
-	void update(const float& elapsedTime, const std::vector<Tile>& collisionTiles, Graphics& graphics);
+	void update(const float& elapsedTime, const std::vector<Tile>& collisionTiles);
 
 	void handleCollisions(const std::vector<Tile>& collisionTiles);
 

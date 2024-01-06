@@ -251,8 +251,8 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
                 object = object->NextSiblingElement("object");
             }
 
-            //objectgroup = objectgroup->NextSiblingElement("objectgroup");
-            //objectgroup->QueryIntAttribute("id", &groupId);
+            objectgroup = objectgroup->NextSiblingElement("objectgroup");
+            objectgroup->QueryIntAttribute("id", &groupId);
 
         }
 
