@@ -25,6 +25,7 @@ public:
 	std::vector<std::pair<int, int>> getMarioSpawnPoints();
 	std::vector<std::pair<int, int>> getLuigiSpawnPoints();
 	std::vector<std::pair<int, int>> getJumpingMarioSpawnPoints();
+	std::vector<std::pair<int, int>> getItemBoxes();
 
 private:
 	std::vector<int> m_numbers;
@@ -35,6 +36,7 @@ private:
 	std::vector<std::pair<int, int>> m_marioSpawnPoints;
 	std::vector<std::pair<int, int>> m_luigiSpawnPoints;
 	std::vector<std::pair<int, int>> m_jumpingMarioSpawnPoints;
+	std::vector<std::pair<int, int>> m_itemBoxes;
 	int m_tileCount;
 	int m_tilesetWidth;
 	int m_tileWidth;

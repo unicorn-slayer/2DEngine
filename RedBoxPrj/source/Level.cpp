@@ -256,6 +256,22 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
 
         }
 
+        if (groupId == 7) {
+            // Iterate through objects within the objectgroup
+            tinyxml2::XMLElement* object = objectgroup->FirstChildElement("object");
+            while (object != nullptr) {
+                int x = 0;
+                int y = 0;
+                object->QueryIntAttribute("x", &x);
+                object->QueryIntAttribute("y", &y);
+                m_itemBoxes.push_back({ x, y });
+                object = object->NextSiblingElement("object");
+            }
+
+
+
+        }
+
         break;
 
     }
@@ -296,4 +312,9 @@ std::vector<std::pair<int, int>> Level::getLuigiSpawnPoints()
 std::vector<std::pair<int, int>> Level::getJumpingMarioSpawnPoints()
 {
     return m_jumpingMarioSpawnPoints;
+}
+
+std::vector<std::pair<int, int>> Level::getItemBoxes()
+{
+    return m_itemBoxes;
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="22" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="57">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="22" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="60">
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer id="1" name="background" width="60" height="22">
   <data encoding="csv">
@@ -28,10 +28,11 @@
 </data>
  </layer>
  <objectgroup id="3" name="collisions">
-  <object id="16" x="448" y="320" width="192" height="32"/>
   <object id="17" x="64" y="416" width="32" height="32"/>
   <object id="21" x="64" y="448" width="1728" height="32"/>
   <object id="22" x="1760" y="416" width="32" height="32"/>
+  <object id="57" x="448" y="320" width="96"/>
+  <object id="59" x="448" y="320" width="224" height="32"/>
  </objectgroup>
  <objectgroup color="#aa0000" id="4" name="marioSpawns">
   <object id="26" x="512" y="416" width="32" height="32"/>
