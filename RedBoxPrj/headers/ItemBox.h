@@ -12,7 +12,7 @@ class ItemBox : public AnimatedSprite
 public:
 	ItemBox(Graphics& graphics, float x, float y);
 
-	void update(std::vector<Goomba>& goombas);
+	void update(Graphics& graphics, std::vector<Goomba>& goombas);
 
 	void doAnimations();
 

@@ -2,6 +2,8 @@
 #include "Goomba.h"
 #include <algorithm>
 
+
+
 ItemBox::ItemBox(Graphics& graphics, float x, float y)
 	: AnimatedSprite(graphics, "goomba.png", 16, 16, 0, 216, 32, 32, x, y, 15)
 	, m_boxEmpty(false)
@@ -11,7 +13,7 @@ ItemBox::ItemBox(Graphics& graphics, float x, float y)
 
 }
 
-void ItemBox::update(std::vector<Goomba>& goombas)
+void ItemBox::update(Graphics& graphics, std::vector<Goomba>& goombas)
 {
 	std::vector<Goomba> collisionGoombas;
 
@@ -21,6 +23,9 @@ void ItemBox::update(std::vector<Goomba>& goombas)
 		Rectangle biggerBox = m_boundingBox;
 
 		biggerBox._height += 2;
+
+		//possibly make the width smaller too
+		//biggerBox._height += 2;
 
 		if (biggerBox.checkCollision(goombas[i].getBoundingBox()))
 		{
@@ -38,8 +43,17 @@ void ItemBox::update(std::vector<Goomba>& goombas)
 			break;
 
 		case sides::BOTTOM:
-			m_boxEmpty = true;
-			break;
+		{
+			if (!m_boxEmpty)
+			{
+				m_boxEmpty = true;
+				Goomba goomba(graphics, -10000, 10000);
+				goombas.push_back(goomba);
+				break;
+			}
+
+		}
+
 
 		case sides::LEFT:
 			break;

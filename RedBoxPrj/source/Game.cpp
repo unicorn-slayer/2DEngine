@@ -178,7 +178,7 @@ void Game::updateEntities(std::vector<Goomba>& goombas, Goomba& cameraGoomba, st
 	{
 		for (int i = 0; i < itemBoxes.size(); i++)
 		{
-			itemBoxes[i].update(goombas);
+			itemBoxes[i].update(graphics, goombas);
 		}
 	}
 
@@ -232,13 +232,7 @@ void Game::updateEntities(std::vector<Goomba>& goombas, Goomba& cameraGoomba, st
 		}
 	}
 
-	if (itemBoxes.size())
-	{
-		for (int i = 0; i < itemBoxes.size(); i++)
-		{
-			itemBoxes[i].update(goombas);
-		}
-	}
+
 }
 
 void Game::goombaFollow(std::vector<Goomba>& goombas)
@@ -267,7 +261,11 @@ void Game::goombaFollow(std::vector<Goomba>& goombas)
 
 			if (nextGoomba.m_goombaDataQueue.size() < (MAX_POSITIONS + 1))
 			{
-				nextGoomba.m_goombaDataQueue.emplace(nextGoomba.getX(), nextGoomba.getY(), nextGoomba.getGrounded(), nextGoomba.getPlayerVelocityX(), nextGoomba.getRightHeld(), nextGoomba.getLeftHeld(), nextGoomba.getPlayerAccelX());
+				if (i != goombas.size() - 2)
+				{
+					nextGoomba.m_goombaDataQueue.emplace(nextGoomba.getX(), nextGoomba.getY(), nextGoomba.getGrounded(), nextGoomba.getPlayerVelocityX(), nextGoomba.getRightHeld(), nextGoomba.getLeftHeld(), nextGoomba.getPlayerAccelX());
+
+				}
 			}
 
 			goombaDataQueue.pop();
