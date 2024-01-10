@@ -5,10 +5,10 @@
 
 class Graphics;
 
-class Mario : public AnimatedSprite
+class Lava : public AnimatedSprite
 {
 public:
-	Mario(Graphics& graphics, float x, float y);
+	Lava(Graphics& graphics, float x, float y);
 
 	void update(const float& elapsedTime, const std::vector<Tile>& collisionTiles);
 
@@ -22,11 +22,12 @@ public:
 
 private:
 
-	float	m_playerVelocityX;
-	float	m_playerVelocityY;
+	float	m_lavaVelocityX;
+	float	m_lavaVelocityY;
 	float	m_accelX;
 	float	m_accelY;
 	float	m_accelerationMagX;
 	float	m_accelerationMagY;
+	int		m_frameCounter;
 
 };

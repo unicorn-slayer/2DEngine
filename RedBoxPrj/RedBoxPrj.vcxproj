@@ -168,6 +168,7 @@
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\ItemBox.cpp" />
     <ClCompile Include="source\JumpingMario.cpp" />
+    <ClCompile Include="source\Lava.cpp" />
     <ClCompile Include="source\Level.cpp" />
     <ClCompile Include="source\Luigi.cpp" />
     <ClCompile Include="source\Main.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="headers\Input.h" />
     <ClInclude Include="headers\ItemBox.h" />
     <ClInclude Include="headers\JumpingMario.h" />
+    <ClInclude Include="headers\Lava.h" />
     <ClInclude Include="headers\Level.h" />
     <ClInclude Include="headers\Luigi.h" />
     <ClInclude Include="headers\Mario.h" />

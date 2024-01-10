@@ -13,6 +13,7 @@
 #include "fireballs.h"
 #include "JumpingMario.h"
 #include "ItemBox.h"
+#include "Lava.h"
 
 Game::Game()
 {
@@ -32,7 +33,7 @@ void Game::gameLoop()
 	std::vector<Goomba> goombas;
 
 	for (int i = 0; i < 4; ++i) {
-		Goomba goomba(graphics, globals::g_centreX, globals::g_centreY - 300);
+		Goomba goomba(graphics, globals::g_centreX + 1300, globals::g_centreY - 300);
 		goombas.push_back(goomba);
 	}
 
@@ -111,6 +112,25 @@ void Game::gameLoop()
 		itemBoxPositions.pop_back();
 	}
 
+	std::vector<std::pair<int, int>> lavaPositions;
+
+	lavaPositions = level.getLavaPositions();
+
+	std::vector<Lava> lavaVec;
+
+	for (int i = (int)lavaPositions.size() - 1; i >= 0; i--)
+	{
+		int x = lavaPositions.back().first;
+		int y = lavaPositions.back().second;
+
+		Lava lava(graphics, (float)x, (float)y); // 
+		lavaVec.push_back(lava); // 
+
+		lavaPositions.pop_back();
+	}
+
+
+
 	SDL_Event event;
 
 	float delayTime = (1000.0f/60.0f);
@@ -134,11 +154,11 @@ void Game::gameLoop()
 
 		cameraGoomba.setCamera(camera);
 
-		this->updateEntities(goombas, cameraGoomba, marios, luigis, fireballsVector, jumpingMarios, itemBoxes, level.getCollisionTiles(), timeStep, graphics);
+		this->updateEntities(goombas, cameraGoomba, marios, luigis, fireballsVector, jumpingMarios, itemBoxes, lavaVec, level.getCollisionTiles(), timeStep, graphics);
 
-		this->checkCollisions(marios, luigis, goombas, fireballsVector, jumpingMarios, level.getCollisionTiles());
+		this->checkCollisions(marios, luigis, goombas, fireballsVector, jumpingMarios, lavaVec, level.getCollisionTiles());
 
-		this->animationUpdate(goombas, marios, luigis, fireballsVector, jumpingMarios, itemBoxes, timeStep);
+		this->animationUpdate(goombas, marios, luigis, fireballsVector, jumpingMarios, itemBoxes, lavaVec, timeStep);
 
 		this->focusCamera(goombas, cameraGoomba);
 
@@ -146,7 +166,7 @@ void Game::gameLoop()
 
 		level.draw(graphics, camera);
 
-		this->drawEntities(goombas, marios, luigis, fireballsVector, jumpingMarios, itemBoxes, graphics, camera);
+		this->drawEntities(goombas, marios, luigis, fireballsVector, jumpingMarios, itemBoxes, lavaVec, graphics, camera);
 
 		graphics.flip();
 
@@ -172,7 +192,7 @@ void Game::handleEvents(std::vector<Goomba>& goombas, Goomba& cameraGoomba, SDL_
 	cameraGoomba.handleEvent(event);
 }
 
-void Game::updateEntities(std::vector<Goomba>& goombas, Goomba& cameraGoomba, std::vector<Mario>& marios, std::vector<Luigi>& luigis, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, std::vector<ItemBox>& itemBoxes, const std::vector<Tile>& tiles, float& timeStep, Graphics& graphics)
+void Game::updateEntities(std::vector<Goomba>& goombas, Goomba& cameraGoomba, std::vector<Mario>& marios, std::vector<Luigi>& luigis, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, const std::vector<Tile>& tiles, float& timeStep, Graphics& graphics)
 {
 	if (itemBoxes.size())
 	{
@@ -232,6 +252,13 @@ void Game::updateEntities(std::vector<Goomba>& goombas, Goomba& cameraGoomba, st
 		}
 	}
 
+	if (lavaVec.size())
+	{
+		for (int i = 0; i < lavaVec.size(); i++)
+		{
+			lavaVec[i].update(timeStep, tiles);
+		}
+	}
 
 }
 
@@ -261,6 +288,7 @@ void Game::goombaFollow(std::vector<Goomba>& goombas)
 
 			if (nextGoomba.m_goombaDataQueue.size() < (MAX_POSITIONS + 1))
 			{
+				// this is a check to make sure the last goomba doesn't get a data queue populated. When you hit an item box, you don't want the newly spawned goomba to take on old values. Make code more readable.
 				if (i != goombas.size() - 2)
 				{
 					nextGoomba.m_goombaDataQueue.emplace(nextGoomba.getX(), nextGoomba.getY(), nextGoomba.getGrounded(), nextGoomba.getPlayerVelocityX(), nextGoomba.getRightHeld(), nextGoomba.getLeftHeld(), nextGoomba.getPlayerAccelX());
@@ -274,7 +302,7 @@ void Game::goombaFollow(std::vector<Goomba>& goombas)
 	}
 }
 
-void Game::checkCollisions(std::vector<Mario>& marios, std::vector<Luigi>& luigis, std::vector<Goomba>& goombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, const std::vector<Tile>& tiles)
+void Game::checkCollisions(std::vector<Mario>& marios, std::vector<Luigi>& luigis, std::vector<Goomba>& goombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, std::vector<Lava>& lavaVec, const std::vector<Tile>& tiles)
 {
 	if (goombas.size() > 0)
 	{
@@ -366,6 +394,26 @@ void Game::checkCollisions(std::vector<Mario>& marios, std::vector<Luigi>& luigi
 				}
 			}
 		}
+
+		for (int i = (int)goombas.size() - 1; i >= 0; i--)
+		{
+			if (lavaVec.size())
+			{
+				for (int j = 0; j < lavaVec.size(); j++)
+				{
+
+					if (goombas[i].getBoundingBox().checkCollision(lavaVec[j].getBoundingBox()))
+					{
+						if (goombas.size())
+						{
+							goombas.erase(goombas.begin() + i);
+							break;
+						}
+					}
+
+				}
+			}
+		}
 	}
 
 
@@ -397,7 +445,7 @@ void Game::checkCollisions(std::vector<Mario>& marios, std::vector<Luigi>& luigi
 	}
 }
 
-void Game::animationUpdate(std::vector<Goomba>& goombas, std::vector<Mario>& marios, std::vector<Luigi>& luigis, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, std::vector<ItemBox>& itemBoxes, float& timeStep)
+void Game::animationUpdate(std::vector<Goomba>& goombas, std::vector<Mario>& marios, std::vector<Luigi>& luigis, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, float& timeStep)
 {
 	if (goombas.size() > 1)
 	{
@@ -465,6 +513,16 @@ void Game::animationUpdate(std::vector<Goomba>& goombas, std::vector<Mario>& mar
 			itemBoxes[i].animationUpdate(timeStep);
 		}
 	}
+
+	if (lavaVec.size())
+	{
+		for (int i = 0; i < lavaVec.size(); i++)
+		{
+			lavaVec[i].doAnimations();
+
+			lavaVec[i].animationUpdate(timeStep);
+		}
+	}
 }
 
 void Game::focusCamera(std::vector<Goomba>& goombas, Goomba& cameraGoomba)
@@ -483,7 +541,7 @@ void Game::focusCamera(std::vector<Goomba>& goombas, Goomba& cameraGoomba)
 	}
 }
 
-void Game::drawEntities(std::vector<Goomba>& goombas, std::vector<Mario>& marios, std::vector<Luigi>& luigis, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, std::vector<ItemBox>& itemBoxes, Graphics& graphics, Rectangle& camera)
+void Game::drawEntities(std::vector<Goomba>& goombas, std::vector<Mario>& marios, std::vector<Luigi>& luigis, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, Graphics& graphics, Rectangle& camera)
 {
 	if (goombas.size())
 	{
@@ -537,6 +595,14 @@ void Game::drawEntities(std::vector<Goomba>& goombas, std::vector<Mario>& marios
 		for (int i = 0; i < itemBoxes.size(); i++)
 		{
 			itemBoxes[i].draw(graphics, camera);
+		}
+	}
+
+	if (lavaVec.size())
+	{
+		for (int i = 0; i < lavaVec.size(); i++)
+		{
+			lavaVec[i].draw(graphics, camera);
 		}
 	}
 }

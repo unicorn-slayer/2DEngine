@@ -182,6 +182,7 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
         }
     }
 
+    //This needs changed to be more programtic. Should go through the object groups and sort data regardless of their order in the xml.
 
     while (objectgroup) {
         int groupId;
@@ -203,6 +204,22 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
             objectgroup = objectgroup->NextSiblingElement("objectgroup");
             objectgroup->QueryIntAttribute("id", &groupId);
 
+        }
+
+        if (groupId == 8) {
+            // Iterate through objects within the objectgroup
+            tinyxml2::XMLElement* object = objectgroup->FirstChildElement("object");
+            while (object != nullptr) {
+                int x = 0;
+                int y = 0;
+                object->QueryIntAttribute("x", &x);
+                object->QueryIntAttribute("y", &y);
+                m_lava.push_back({ x, y });
+                object = object->NextSiblingElement("object");
+            }
+
+            objectgroup = objectgroup->NextSiblingElement("objectgroup");
+            objectgroup->QueryIntAttribute("id", &groupId);
         }
 
         if (groupId == 4) {
@@ -269,13 +286,13 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
             }
 
 
-
         }
+
+
 
         break;
 
     }
-
 
 }
 
@@ -317,4 +334,9 @@ std::vector<std::pair<int, int>> Level::getJumpingMarioSpawnPoints()
 std::vector<std::pair<int, int>> Level::getItemBoxes()
 {
     return m_itemBoxes;
+}
+
+std::vector<std::pair<int, int>> Level::getLavaPositions()
+{
+    return m_lava;
 }
