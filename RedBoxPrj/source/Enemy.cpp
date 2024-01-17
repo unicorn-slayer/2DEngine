@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Fireballs.h"
 #include <algorithm>
 
 //put all parameters in Enemy and pass down to AnimatedSprite
@@ -10,6 +11,7 @@ Enemy::Enemy(Graphics& graphics, const std::string& filePath, int sourceWidth, i
 	, m_accelY(0)
 	, m_accelerationMagX(0.2f)
 	, m_accelerationMagY(0.3f)
+	, m_graphics(graphics)
 {
 }
 
@@ -127,3 +129,73 @@ void Mario::setupAnimation()
 	AnimatedSprite::addAnimation(4, 0, 32, "miniMarioLeft", 16, 16);
 	AnimatedSprite::addAnimation(1, 0, 16, "miniMarioStop", 16, 16);
 }
+
+
+
+
+
+Luigi::Luigi(Graphics& graphics, float x, float y, std::vector<Fireballs>& fireballs)
+	: Enemy(graphics, "goomba.png", 16, 32, 0, 48, 32, 64, x, y, 5)
+	, m_fireballs(fireballs)
+	, m_frameCounter(0)
+{
+	this->setupAnimation();
+	AnimatedSprite::playAnimation("bigLuigiRight");
+}
+
+void Luigi::update(const float& elapsedTime, const std::vector<Tile>& collisionTiles)
+{
+	Enemy::update(elapsedTime, collisionTiles);
+
+	Luigi::launchFireball();
+}
+
+void Luigi::doAnimations()
+{
+	if (m_playerVelocityX != 0)
+	{
+		if (m_playerVelocityX > 0)
+		{
+			AnimatedSprite::playAnimation("bigLuigiRight");
+		}
+		else
+		{
+			AnimatedSprite::playAnimation("bigLuigiLeft");
+		}
+	
+	}
+	else
+	{
+		AnimatedSprite::playAnimation("bigLuigiRight");
+	}
+}
+
+
+
+void Luigi::launchFireball()
+{
+
+	if (m_frameCounter == 10)
+	{
+		if (Enemy::m_playerVelocityX > 0)
+		{
+			m_fireballs.push_back(Fireballs(m_graphics, m_x, m_y + 48, right));
+		}
+		else
+		{
+			m_fireballs.push_back(Fireballs(m_graphics, m_x, m_y + 48, left));
+		}
+
+		m_frameCounter = 0;
+	}
+
+	m_frameCounter++;
+
+}
+
+void Luigi::setupAnimation()
+{
+	AnimatedSprite::addAnimation(3, 0, 48, "bigLuigiRight", Sprite::m_sourceRect.w, Sprite::m_sourceRect.h);
+	AnimatedSprite::addAnimation(3, 0, 80, "bigLuigiLeft", Sprite::m_sourceRect.w, Sprite::m_sourceRect.h);
+}
+

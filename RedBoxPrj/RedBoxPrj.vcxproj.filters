@@ -54,9 +54,6 @@
     <ClCompile Include="source\Goomba.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Luigi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Fireballs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -99,9 +96,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\Goomba.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Luigi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\Fireballs.h">
