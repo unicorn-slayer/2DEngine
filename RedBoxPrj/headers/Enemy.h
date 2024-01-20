@@ -28,6 +28,7 @@ protected:
 	float		m_accelY;
 	float		m_accelerationMagX;
 	float		m_accelerationMagY;
+	bool		m_grounded;
 	Graphics	m_graphics;
 
 };
@@ -61,5 +62,22 @@ public:
 private:
 
 	int			m_frameCounter;
+
+};
+
+class JumpingMario : public Enemy
+{
+public:
+	JumpingMario(Graphics& graphics, float x, float y);
+
+	void setupAnimation();
+
+	void update(const float& elapsedTime, const std::vector<Tile>& collisionTiles) override;
+
+	virtual void handleCollisions(const std::vector<Tile>& collisionTiles) override;
+
+	void doAnimations() override;
+
+private:
 
 };

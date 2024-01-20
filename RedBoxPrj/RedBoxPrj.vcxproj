@@ -168,7 +168,12 @@
     <ClCompile Include="source\Graphics.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\ItemBox.cpp" />
-    <ClCompile Include="source\JumpingMario.cpp" />
+    <ClCompile Include="source\JumpingMario.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="source\Lava.cpp" />
     <ClCompile Include="source\Level.cpp" />
     <ClCompile Include="source\Main.cpp" />
@@ -187,7 +192,12 @@
     <ClInclude Include="headers\Graphics.h" />
     <ClInclude Include="headers\Input.h" />
     <ClInclude Include="headers\ItemBox.h" />
-    <ClInclude Include="headers\JumpingMario.h" />
+    <ClInclude Include="headers\JumpingMario.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="headers\Lava.h" />
     <ClInclude Include="headers\Level.h" />
     <ClInclude Include="headers\Rectangle.h" />

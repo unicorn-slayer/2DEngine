@@ -8,136 +8,137 @@
 #include "Goomba.h"
 #include <iostream>
 #include <algorithm>
-//#include "Mario.h"
-#include "Luigi.h"
 #include "fireballs.h"
-#include "JumpingMario.h"
 #include "ItemBox.h"
 #include "Lava.h"
 #include "Enemy.h"
+#include <memory>
 
 Game::Game()
+	: m_graphics()
+	, m_input()
+	, m_level()
+	, m_camera({ 0, 0, 700, 700 })
+	, m_cameraGoomba(Goomba(m_graphics, globals::g_centreX, globals::g_centreY - 300))
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
+	this->loadResources();
 	this->gameLoop();
 }
 
-void Game::gameLoop()
+void Game::loadResources()
 {
-	Graphics graphics;
-	Input input;
-	Level level;
-	level.loadMap(graphics, "map.tmx");
-	Rectangle camera = { 0, 0, 700, 700 };
+	// load the level
+	m_level.loadMap(m_graphics, "map.tmx");
 
-
-	std::vector<Goomba> goombas;
-
+	//load the goombas
 	for (int i = 0; i < 4; ++i) {
-		Goomba goomba(graphics, globals::g_centreX, globals::g_centreY - 300);
-		goombas.push_back(goomba);
+		Goomba goomba(m_graphics, globals::g_centreX, globals::g_centreY - 300);
+		m_goombas.push_back(goomba);
 	}
 
-	Goomba cameraGoomba(graphics, globals::g_centreX, globals::g_centreY - 300);
 
 
-	std::vector<std::vector<Fireballs>> fireballsVector;
-
-
-	std::vector<std::vector<std::shared_ptr<Enemy>>> enemiesList; ////////////////////
-
-	std::vector<std::pair<int, int>> spawn = level.getMarioSpawnPoints();
+	/// load the marios and add them to enemy list
+	std::vector<std::pair<int, int>> spawn = m_level.getMarioSpawnPoints();
 
 	std::vector<std::shared_ptr<Enemy>> marios;
 
-	for (int i = (int)spawn.size()-1; i >= 0; i--)
+	for (int i = (int)spawn.size() - 8; i >= 0; i--)
 	{
 		int x = spawn.back().first;
 		int y = spawn.back().second;
 
-		marios.push_back(std::make_shared<Mario>(graphics, (float)x, (float)y));
+		marios.push_back(std::make_shared<Mario>(m_graphics, (float)x, (float)y));
 
 		spawn.pop_back();
-	} 
+	}
 
-	enemiesList.push_back(marios);
+	m_enemiesList.push_back(marios);
 
-	spawn = level.getLuigiSpawnPoints();
 
-	std::vector<std::shared_ptr<Enemy>> luigis;
 
+	/// prime the fireballs so we can pass them to each luigi.
 	std::vector<Fireballs> fires = {};
 
 	for (int i = 0; i < spawn.size(); i++)
 	{
-		fireballsVector.push_back(fires);
+		//m_fireballsVector.push_back(fires);
 	}
 
+	/// load the luigis and add them to enemy list along with a fireball vector from above.
+	spawn = m_level.getLuigiSpawnPoints();
+
+	std::vector<std::shared_ptr<Enemy>> luigis;
+	
 	for (int i = (int)spawn.size() - 1; i >= 0; i--)
 	{
 
-		int x = spawn.back().first;
-		int y = spawn.back().second;
+		//int x = spawn.back().first;
+		//int y = spawn.back().second;
 
-		luigis.push_back(std::make_shared<Luigi>(graphics, (float)x, (float)y, fireballsVector[i]));
+		//luigis.push_back(std::make_shared<Luigi>(m_graphics, (float)x, (float)y, m_fireballsVector[i]));
 
-		spawn.pop_back();
+		//spawn.pop_back();
 	}
 
-	enemiesList.push_back(luigis);
+	m_enemiesList.push_back(luigis);
 
 
-	spawn = level.getJumpingMarioSpawnPoints();
+	/// now load the jumpingMarios and add them to enemy list
+	spawn = m_level.getJumpingMarioSpawnPoints();
 
-	std::vector<JumpingMario> jumpingMarios;
+	std::vector<std::shared_ptr<Enemy>> jumpingMarios;
 
 	for (int i = (int)spawn.size() - 1; i >= 0; i--)
 	{
 		//int x = spawn.back().first;
 		//int y = spawn.back().second;
 
-		//JumpingMario jumpingMario(graphics, (float)x, (float)y);
-		//jumpingMarios.push_back(jumpingMario);
+		//jumpingMarios.push_back(std::make_shared<JumpingMario>(m_graphics, (float)x, (float)y));
 
 		//spawn.pop_back();
 	}
 
+	m_enemiesList.push_back(jumpingMarios);
 
+
+	/// load itemboxes then add them to m_itemBoxes
 	std::vector<std::pair<int, int>> itemBoxPositions;
 
-	itemBoxPositions = level.getItemBoxes();
-
-	std::vector<ItemBox> itemBoxes;
+	itemBoxPositions = m_level.getItemBoxes();
 
 	for (int i = (int)itemBoxPositions.size() - 1; i >= 0; i--)
 	{
 		int x = itemBoxPositions.back().first;
 		int y = itemBoxPositions.back().second - 2;
 
-		ItemBox itemBox(graphics, (float)x, (float)y); // 
-		itemBoxes.push_back(itemBox); // 
+		ItemBox itemBox(m_graphics, (float)x, (float)y); // 
+		m_itemBoxes.push_back(itemBox); // 
 
 		itemBoxPositions.pop_back();
 	}
 
+
+	/// load lavaPositions then add them to m_lavaVec
 	std::vector<std::pair<int, int>> lavaPositions;
 
-	lavaPositions = level.getLavaPositions();
-
-	std::vector<Lava> lavaVec;
+	lavaPositions = m_level.getLavaPositions();
 
 	for (int i = (int)lavaPositions.size() - 1; i >= 0; i--)
 	{
 		int x = lavaPositions.back().first;
 		int y = lavaPositions.back().second;
 
-		Lava lava(graphics, (float)x, (float)y); // 
-		lavaVec.push_back(lava); // 
+		Lava lava(m_graphics, (float)x, (float)y); // 
+		m_lavaVec.push_back(lava); // 
 
 		lavaPositions.pop_back();
 	}
+}
 
-
+void Game::gameLoop()
+{
 
 	SDL_Event event;
 
@@ -156,27 +157,34 @@ void Game::gameLoop()
 				return;
 			}
 
-			this->handleEvents(goombas, cameraGoomba, event);
+			this->handleEvents(m_goombas, m_cameraGoomba, event);
 
 		}
 
-		cameraGoomba.setCamera(camera);
+		// we focus the main camera on an invisible goomba which spawns wherever the leading goomba spawns. This leading goomba, aka cameraGoomba, will
+		// have identical movements to the leading goomba. This ensures the camera only tracks one goomba, and doesn't jump erratically to other
+		// goombas if they get killed.
+		m_cameraGoomba.setCamera(m_camera);
 
-		this->updateEntities(enemiesList, goombas, cameraGoomba, fireballsVector, jumpingMarios, itemBoxes, lavaVec, level.getCollisionTiles(), timeStep, graphics);
+		this->updateEntities(m_enemiesList, m_goombas, m_cameraGoomba, m_fireballsVector, m_itemBoxes, m_lavaVec, m_level.getCollisionTiles(), timeStep, m_graphics);
 
-		this->checkCollisions(enemiesList, goombas, fireballsVector, jumpingMarios, lavaVec, level.getCollisionTiles());
+		this->checkCollisions(m_enemiesList, m_goombas, m_fireballsVector, m_lavaVec, m_level.getCollisionTiles());
 
-		this->animationUpdate(enemiesList, goombas, fireballsVector, jumpingMarios, itemBoxes, lavaVec, timeStep);
+		this->animationUpdate(m_enemiesList, m_goombas, m_fireballsVector, m_itemBoxes, m_lavaVec, timeStep);
 
-		this->focusCamera(goombas, cameraGoomba);
+		this->focusCamera(m_goombas, m_cameraGoomba);
 
-		graphics.clear();
+		// after game logic is processed, this will clear the screen
+		m_graphics.clear();
 
-		level.draw(graphics, camera);
 
-		this->drawEntities(enemiesList, goombas, fireballsVector, jumpingMarios, itemBoxes, lavaVec, graphics, camera);
+		//these next two lines will draw everything to the back buffer
+		m_level.draw(m_graphics, m_camera);
 
-		graphics.flip();
+		this->drawEntities(m_enemiesList, m_goombas, m_fireballsVector, m_itemBoxes, m_lavaVec, m_graphics, m_camera);
+
+		// backbuffer becomes frontbuffer, i.e. the display we see
+		m_graphics.flip();
 
 		float frameTime = SDL_GetTicks() - startTimer;
 
@@ -200,7 +208,7 @@ void Game::handleEvents(std::vector<Goomba>& goombas, Goomba& cameraGoomba, SDL_
 	cameraGoomba.handleEvent(event);
 }
 
-void Game::updateEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, Goomba& cameraGoomba, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, const std::vector<Tile>& tiles, float& timeStep, Graphics& graphics)
+void Game::updateEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, Goomba& cameraGoomba, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, const std::vector<Tile>& tiles, float& timeStep, Graphics& graphics)
 {
 
 	if (enemiesList.size())
@@ -222,15 +230,6 @@ void Game::updateEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enem
 		for (int i = 0; i < itemBoxes.size(); i++)
 		{
 			itemBoxes[i].update(graphics, goombas);
-		}
-	}
-
-
-	if (jumpingMarios.size())
-	{
-		for (int i = 0; i < jumpingMarios.size(); i++)
-		{
-			jumpingMarios[i].update(timeStep, tiles);
 		}
 	}
 
@@ -274,8 +273,32 @@ void Game::goombaFollow(std::vector<Goomba>& goombas)
 {
 	constexpr int MAX_POSITIONS = 3;
 
-	for (int i = 0; i < goombas.size() - 1; ++i) {
+	for (int i = 0; i <= goombas.size() - 1; i++) {
+
+
+		if (goombas.size() == 1) {
+
+			Goomba& lastGoomba = goombas[i];
+			std::queue<goombaData>& goombaDataQueue = lastGoomba.m_goombaDataQueue;
+
+			if (goombaDataQueue.size() > 3)
+			{
+				goombaDataQueue.pop();
+			}
+
+			continue;
+		}
+
 		if (i == goombas.size()-1) {
+
+			//Goomba& lastGoomba = goombas[i];
+			//std::queue<goombaData>& goombaDataQueue = lastGoomba.m_goombaDataQueue;
+
+			//if (goombaDataQueue.size() > 3)
+			//{
+			//	goombaDataQueue.pop();
+			//}
+
 			continue;
 		}
 
@@ -296,8 +319,8 @@ void Game::goombaFollow(std::vector<Goomba>& goombas)
 
 			if (nextGoomba.m_goombaDataQueue.size() < (MAX_POSITIONS + 1))
 			{
-				// this is a check to make sure the last goomba doesn't get a data queue populated. When you hit an item box, you don't want the newly spawned goomba to take on old values. Make code more readable.
-				if (i != goombas.size() - 2)
+				
+				if (i != goombas.size() - 1)
 				{
 					nextGoomba.m_goombaDataQueue.emplace(nextGoomba.getX(), nextGoomba.getY(), nextGoomba.getGrounded(), nextGoomba.getPlayerVelocityX(), nextGoomba.getRightHeld(), nextGoomba.getLeftHeld(), nextGoomba.getPlayerAccelX());
 
@@ -310,7 +333,7 @@ void Game::goombaFollow(std::vector<Goomba>& goombas)
 	}
 }
 
-void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, std::vector<Lava>& lavaVec, const std::vector<Tile>& tiles)
+void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<Lava>& lavaVec, const std::vector<Tile>& tiles)
 {
 
 	startEnemies:
@@ -331,32 +354,11 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 								if (goombas.size())
 								{
 									goombas.erase(goombas.begin() + i);
-									//break;
 									goto startEnemies;
 								}
 							}
 						}
 					}
-				}
-			}
-		}
-
-		for (int i = (int)goombas.size() - 1; i >= 0; i--)
-		{
-			if (jumpingMarios.size())
-			{
-				for (int j = 0; j < jumpingMarios.size(); j++)
-				{
-
-					if (goombas[i].getBoundingBox().checkCollision(jumpingMarios[j].getBoundingBox()))
-					{
-						if (goombas.size())
-						{
-							goombas.erase(goombas.begin() + i);
-							break;
-						}
-					}
-
 				}
 			}
 		}
@@ -406,7 +408,6 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 							break;
 						}
 					}
-
 				}
 			}
 		}
@@ -436,12 +437,11 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 					}
 				}
 			}
-
 		}
 	}
 }
 
-void Game::animationUpdate(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, float& timeStep)
+void Game::animationUpdate(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, float& timeStep)
 {
 
 	if (enemiesList.size())
@@ -467,16 +467,6 @@ void Game::animationUpdate(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 			goombas[i].doAnimations();
 
 			goombas[i].animationUpdate(timeStep);
-		}
-	}
-
-	if (jumpingMarios.size())
-	{
-		for (int i = 0; i < jumpingMarios.size(); i++)
-		{
-			jumpingMarios[i].doAnimations();
-
-			jumpingMarios[i].animationUpdate(timeStep);
 		}
 	}
 
@@ -534,7 +524,7 @@ void Game::focusCamera(std::vector<Goomba>& goombas, Goomba& cameraGoomba)
 	}
 }
 
-void Game::drawEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<JumpingMario>& jumpingMarios, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, Graphics& graphics, Rectangle& camera)
+void Game::drawEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, Graphics& graphics, Rectangle& camera)
 {
 
 	if (enemiesList.size())
@@ -557,14 +547,6 @@ void Game::drawEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemie
 		for (int i = 0; i < goombas.size(); i++)
 		{
 			goombas[i].draw(graphics, camera);
-		}
-	}
-
-	if (jumpingMarios.size())
-	{
-		for (int i = 0; i < jumpingMarios.size(); i++)
-		{
-			jumpingMarios[i].draw(graphics, camera);
 		}
 	}
 
