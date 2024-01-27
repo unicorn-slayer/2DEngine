@@ -14,7 +14,9 @@ Goomba::Goomba(Graphics& graphics, float x, float y)
 	, m_leftHeld(false)
 	, m_playerVelocityX(0)
 	, m_playerVelocityY(0)
-
+	, m_alive(true)
+	, m_oneUpGoomba(false)
+	, m_track(0)
 {
 	this->setupAnimation();
 	AnimatedSprite::playAnimation("goombaStop");
@@ -96,7 +98,8 @@ void Goomba::update(const float& elapsedTime, const std::vector<Tile>& collision
 void Goomba::move(const float& elapsedTime)
 {
 	// move x
-	float maxSpeed = 15.0f;
+	float maxSpeed = 5.0f;
+	//float maxSpeed = 2.0f;
 
 	if (m_leftHeld || m_rightHeld)
 	{
@@ -140,7 +143,7 @@ void Goomba::move(const float& elapsedTime)
 
 void Goomba::updateGoombaDataQueue()
 {
-	constexpr int MAX_ELEMENTS = 31;
+	constexpr int MAX_ELEMENTS = 100;
 
 
 	if (m_goombaDataQueue.size() < MAX_ELEMENTS)
@@ -261,13 +264,18 @@ void Goomba::handleScreenBounds(const float& elapsedTime)
 
 void Goomba::draw(Graphics& graphics, Rectangle& camera)
 {
-	SDL_Rect destRect = { (int)Sprite::m_x, (int)Sprite::m_y, Sprite::m_width, Sprite::m_height };
 
-	//when drawing, need to offset the redBox by the camera distance
-	destRect.x = destRect.x - (int)camera._x;
-	destRect.y = destRect.y - (int)camera._y;
+	if (Sprite::m_visible)
+	{
+		SDL_Rect destRect = { (int)Sprite::m_x, (int)Sprite::m_y, Sprite::m_width, Sprite::m_height };
 
-	AnimatedSprite::animateDraw(graphics, (int)destRect.x, (int)destRect.y, destRect.w, destRect.h);
+		//when drawing, need to offset the redBox by the camera distance
+		destRect.x = destRect.x - (int)camera._x;
+		destRect.y = destRect.y - (int)camera._y;
+
+		AnimatedSprite::animateDraw(graphics, (int)destRect.x, (int)destRect.y, destRect.w, destRect.h);
+	}
+
 }
 
 void Goomba::setCamera(Rectangle& camera)
@@ -299,11 +307,18 @@ void Goomba::setCamera(Rectangle& camera)
 
 void Goomba::doAnimations()
 {
-	if (m_playerVelocityX != 0.0f)
+	if (m_alive)
 	{
-		if (m_grounded)
+		if (m_playerVelocityX != 0.0f)
 		{
-			AnimatedSprite::playAnimation("goombaWalk");
+			if (m_grounded)
+			{
+				AnimatedSprite::playAnimation("goombaWalk");
+			}
+			else
+			{
+				AnimatedSprite::playAnimation("goombaStop");
+			}
 		}
 		else
 		{
@@ -312,14 +327,16 @@ void Goomba::doAnimations()
 	}
 	else
 	{
-		AnimatedSprite::playAnimation("goombaStop");
+		AnimatedSprite::playAnimation("goombaDie");
 	}
+
 }
 
 void Goomba::setupAnimation()
 {
 	AnimatedSprite::addAnimation(2, 0, 0, "goombaWalk", 16, 16);
 	AnimatedSprite::addAnimation(1, 0, 0, "goombaStop", 16, 16);
+	AnimatedSprite::addAnimation(1, 0, 280, "goombaDie", 8, 16);
 }
 
 bool Goomba::getRightHeld()
@@ -371,4 +388,16 @@ float Goomba::getPlayerAccelX()
 void Goomba::setPlayerAccelX(const float accelX)
 {
 	m_accelX = accelX;
+}
+
+void Goomba::die()
+{
+	m_alive = false;
+
+	m_playerVelocityY = -10.0f;
+
+	Sprite::m_boundingBox._height = 0;
+	Sprite::m_boundingBox._width = 0;
+	Sprite::m_boundingBox._x = 0;
+	Sprite::m_boundingBox._y = 0;
 }

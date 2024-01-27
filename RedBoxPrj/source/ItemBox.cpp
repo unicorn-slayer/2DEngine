@@ -46,14 +46,11 @@ void ItemBox::update(Graphics& graphics, std::vector<Goomba>& goombas)
 		{
 			if (!m_boxEmpty)
 			{
+				//add points
 				m_boxEmpty = true;
-				Goomba goomba(graphics, -10000, 10000);
-				goombas.push_back(goomba);
 				break;
 			}
-
 		}
-
 
 		case sides::LEFT:
 			break;

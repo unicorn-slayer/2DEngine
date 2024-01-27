@@ -24,6 +24,7 @@ Game::Game()
 	SDL_Init(SDL_INIT_EVERYTHING);
 	this->loadResources();
 	this->gameLoop();
+
 }
 
 void Game::loadResources()
@@ -46,12 +47,12 @@ void Game::loadResources()
 
 	for (int i = (int)spawn.size() - 8; i >= 0; i--)
 	{
-		int x = spawn.back().first;
-		int y = spawn.back().second;
+		//int x = spawn.back().first;
+		//int y = spawn.back().second;
 
-		marios.push_back(std::make_shared<Mario>(m_graphics, (float)x, (float)y));
+		//marios.push_back(std::make_shared<Mario>(m_graphics, (float)x, (float)y));
 
-		spawn.pop_back();
+		//spawn.pop_back();
 	}
 
 	m_enemiesList.push_back(marios);
@@ -90,14 +91,14 @@ void Game::loadResources()
 
 	std::vector<std::shared_ptr<Enemy>> jumpingMarios;
 
-	for (int i = (int)spawn.size() - 1; i >= 0; i--)
+	for (int i = (int)spawn.size() - 1; i >= 6; i--)
 	{
-		//int x = spawn.back().first;
-		//int y = spawn.back().second;
+		int x = spawn.back().first;
+		int y = spawn.back().second;
 
-		//jumpingMarios.push_back(std::make_shared<JumpingMario>(m_graphics, (float)x, (float)y));
+		jumpingMarios.push_back(std::make_shared<JumpingMario>(m_graphics, (float)x, (float)y));
 
-		//spawn.pop_back();
+		spawn.pop_back();
 	}
 
 	m_enemiesList.push_back(jumpingMarios);
@@ -202,6 +203,7 @@ void Game::handleEvents(std::vector<Goomba>& goombas, Goomba& cameraGoomba, SDL_
 {
 	if (goombas.size())
 	{
+		//DO THIS BUT HAVE A CHECK TO SEE IF THE GOOMBA IS ALIVE OR NOT AND ONLY HANDLE EVENTS IF IT IS
 		goombas[0].handleEvent(event);
 	}
 
@@ -271,43 +273,34 @@ void Game::updateEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enem
 
 void Game::goombaFollow(std::vector<Goomba>& goombas)
 {
-	constexpr int MAX_POSITIONS = 3;
+	constexpr int MAX_POSITIONS = 8;
 
 	for (int i = 0; i <= goombas.size() - 1; i++) {
 
 
-		if (goombas.size() == 1) {
+		Goomba& currGoomba = goombas[i];
+		std::queue<goombaData>& goombaDataQueueCurr = currGoomba.m_goombaDataQueue;
 
-			Goomba& lastGoomba = goombas[i];
-			std::queue<goombaData>& goombaDataQueue = lastGoomba.m_goombaDataQueue;
-
-			if (goombaDataQueue.size() > 3)
-			{
-				goombaDataQueue.pop();
-			}
-
-			continue;
+		if (goombaDataQueueCurr.size() > MAX_POSITIONS+1)
+		{
+			goombaDataQueueCurr.pop();
 		}
 
-		if (i == goombas.size()-1) {
-
-			//Goomba& lastGoomba = goombas[i];
-			//std::queue<goombaData>& goombaDataQueue = lastGoomba.m_goombaDataQueue;
-
-			//if (goombaDataQueue.size() > 3)
-			//{
-			//	goombaDataQueue.pop();
-			//}
-
+		if (i == goombas.size() - 1)
+		{
 			continue;
 		}
+		
 
 		Goomba& currentGoomba = goombas[i];
 		Goomba& nextGoomba = goombas[i + 1];
-
 		std::queue<goombaData>& goombaDataQueue = currentGoomba.m_goombaDataQueue;
 
-		if (goombaDataQueue.size() > MAX_POSITIONS) {
+
+
+		if (goombaDataQueue.size() > MAX_POSITIONS) 
+			
+		{
 
 			nextGoomba.setX(goombaDataQueue.front().xPosition);
 			nextGoomba.setY(goombaDataQueue.front().yPosition);
@@ -317,18 +310,21 @@ void Game::goombaFollow(std::vector<Goomba>& goombas)
 			nextGoomba.setRightHeld(goombaDataQueue.front().right_held);
 			nextGoomba.setPlayerAccelX(goombaDataQueue.front().accelX);
 
-			if (nextGoomba.m_goombaDataQueue.size() < (MAX_POSITIONS + 1))
-			{
-				
-				if (i != goombas.size() - 1)
-				{
-					nextGoomba.m_goombaDataQueue.emplace(nextGoomba.getX(), nextGoomba.getY(), nextGoomba.getGrounded(), nextGoomba.getPlayerVelocityX(), nextGoomba.getRightHeld(), nextGoomba.getLeftHeld(), nextGoomba.getPlayerAccelX());
-
-				}
-			}
-
 			goombaDataQueue.pop();
 
+		}
+		
+
+		if (nextGoomba.m_goombaDataQueue.size() < (MAX_POSITIONS + 1))
+		{
+
+			if (i != goombas.size() - 1)
+			{
+
+				nextGoomba.m_goombaDataQueue.emplace(nextGoomba.getX(), nextGoomba.getY(), nextGoomba.getGrounded(), nextGoomba.getPlayerVelocityX(), nextGoomba.getRightHeld(), nextGoomba.getLeftHeld(), nextGoomba.getPlayerAccelX());
+				
+
+			}
 		}
 	}
 }
@@ -351,10 +347,29 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 						{
 							if (goombas[i].getBoundingBox().checkCollision(enemiesList[j][k]->getBoundingBox()))
 							{
-								if (goombas.size())
+								if (!goombas[i].getGrounded())
 								{
-									goombas.erase(goombas.begin() + i);
-									goto startEnemies;
+									enemiesList[j][k]->die();
+								}
+								else
+								{
+									if (goombas.size())
+									{
+										if (enemiesList[j][k]->m_alive)
+										{
+											//goombas.erase(goombas.begin() + i);
+											//goto startEnemies;
+											goombas[i].m_visible = false;
+											goombas[i].m_alive = false;
+
+											if (i == 0)
+											{
+												goombas.erase(goombas.begin() + i);
+												goto startEnemies;
+
+											}
+										}
+									}
 								}
 							}
 						}
@@ -363,8 +378,8 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 			}
 		}
 
-		startagain:
 
+		startagain:
 		if (goombas.size())
 		{
 			for (int i = 0; i < goombas.size(); i++)
@@ -512,14 +527,14 @@ void Game::focusCamera(std::vector<Goomba>& goombas, Goomba& cameraGoomba)
 {
 	if (goombas.size())
 	{
-		if (cameraGoomba.getX() > goombas[0].getX() + 75)
+		if (cameraGoomba.getX() > goombas[0].getX() + 350)
 		{
-			cameraGoomba.setX(goombas[0].getX() + 75);
+			cameraGoomba.setX(goombas[0].getX() + 350);
 		}
 
-		if (cameraGoomba.getX() < goombas[0].getX() - 75)
+		if (cameraGoomba.getX() < goombas[0].getX() - 350)
 		{
-			cameraGoomba.setX(goombas[0].getX() - 75);
+			cameraGoomba.setX(goombas[0].getX() - 350);
 		}
 	}
 }

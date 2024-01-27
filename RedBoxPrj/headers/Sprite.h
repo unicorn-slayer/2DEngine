@@ -19,6 +19,8 @@ public:
 	void setY(float y);
 	Rectangle getBoundingBox();
 
+	bool m_visible;
+
 protected:
 	SDL_Rect m_sourceRect;
 	SDL_Texture* m_spriteSheet;

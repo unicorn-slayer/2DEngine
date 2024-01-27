@@ -13,6 +13,11 @@ Enemy::Enemy(Graphics& graphics, const std::string& filePath, int sourceWidth, i
 	, m_accelerationMagY(0.3f)
 	, m_graphics(graphics)
 	, m_grounded(false)
+	, m_alive(true)
+{
+}
+
+Enemy::~Enemy()
 {
 }
 
@@ -43,66 +48,78 @@ void Enemy::update(const float& elapsedTime, const std::vector<Tile>& collisionT
 
 void Enemy::handleCollisions(const std::vector<Tile>& collisionTiles)
 {
-	std::vector<Tile> collisionTilesActive;
-
-	// handle collisions
-	for (const Tile& tile : collisionTiles)
+	if (m_alive)
 	{
-		if (Sprite::m_boundingBox.checkCollision(tile.boundingBox))
+		std::vector<Tile> collisionTilesActive;
+
+		// handle collisions
+		for (const Tile& tile : collisionTiles)
 		{
-			collisionTilesActive.push_back(tile);
+			if (Sprite::m_boundingBox.checkCollision(tile.boundingBox))
+			{
+				collisionTilesActive.push_back(tile);
+			}
+		}
+
+		for (Tile& tile : collisionTilesActive)
+		{
+			sides::Side side = m_boundingBox.getCollisionSide(tile.boundingBox);
+
+			switch (side)
+			{
+			case sides::TOP:
+				m_playerVelocityY = 0;
+				Sprite::m_y = tile.boundingBox._y + Sprite::m_height + 1;
+				Sprite::m_boundingBox._y = tile.boundingBox._y + Sprite::m_height + 1;
+				break;
+
+			case sides::BOTTOM:
+				Sprite::m_y = tile.boundingBox._y - Sprite::m_height;
+				Sprite::m_boundingBox._y = tile.boundingBox._y - Sprite::m_height;
+				m_playerVelocityY = 0;
+				break;
+
+			case sides::LEFT:
+				m_playerVelocityX = -m_playerVelocityX;
+				m_accelerationMagX = -m_accelerationMagX;
+				break;
+
+			case sides::RIGHT:
+				m_playerVelocityX = -m_playerVelocityX;
+				m_accelerationMagX = -m_accelerationMagX;
+				break;
+			}
 		}
 	}
 
-	for (Tile& tile : collisionTilesActive)
-	{
-		sides::Side side = m_boundingBox.getCollisionSide(tile.boundingBox);
-
-		switch (side)
-		{
-		case sides::TOP:
-			m_playerVelocityY = 0;
-			Sprite::m_y = tile.boundingBox._y + Sprite::m_height + 1;
-			Sprite::m_boundingBox._y = tile.boundingBox._y + Sprite::m_height + 1;
-			break;
-
-		case sides::BOTTOM:
-			Sprite::m_y = tile.boundingBox._y - Sprite::m_height;
-			Sprite::m_boundingBox._y = tile.boundingBox._y - Sprite::m_height;
-			m_playerVelocityY = 0;
-			break;
-
-		case sides::LEFT:
-			m_playerVelocityX = -m_playerVelocityX;
-			m_accelerationMagX = -m_accelerationMagX;
-			break;
-
-		case sides::RIGHT:
-			m_playerVelocityX = -m_playerVelocityX;
-			m_accelerationMagX = -m_accelerationMagX;
-			break;
-		}
-	}
 }
 
 void Enemy::doAnimations()
 {
-	if (m_playerVelocityX != 0)
+	if (m_alive)
 	{
-		if (m_playerVelocityX > 0)
+		if (m_playerVelocityX != 0)
 		{
-			AnimatedSprite::playAnimation("miniMarioRight");
+			if (m_playerVelocityX > 0)
+			{
+				AnimatedSprite::playAnimation("miniMarioRight");
+			}
+			else
+			{
+				AnimatedSprite::playAnimation("miniMarioLeft");
+			}
+
 		}
 		else
 		{
-			AnimatedSprite::playAnimation("miniMarioLeft");
+			AnimatedSprite::playAnimation("miniMarioStop");
 		}
-
 	}
 	else
 	{
-		AnimatedSprite::playAnimation("miniMarioStop");
+		AnimatedSprite::playAnimation("miniMarioDie");
 	}
+
 }
 
 void Enemy::draw(Graphics& graphics, Rectangle& camera)
@@ -114,6 +131,20 @@ void Enemy::draw(Graphics& graphics, Rectangle& camera)
 	destRect.y = destRect.y - (int)camera._y;
 
 	AnimatedSprite::animateDraw(graphics, (int)destRect.x, (int)destRect.y, destRect.w, destRect.h);
+}
+
+void Enemy::die()
+{
+	m_alive = false;
+
+	m_playerVelocityY = -10.0f;
+
+	Sprite::m_boundingBox._height = 0;
+	Sprite::m_boundingBox._width = 0;
+	Sprite::m_boundingBox._x = 0;
+	Sprite::m_boundingBox._y = 0;
+
+
 }
 
 
@@ -129,6 +160,7 @@ void Mario::setupAnimation()
 	AnimatedSprite::addAnimation(4, 0, 16, "miniMarioRight", 16, 16);
 	AnimatedSprite::addAnimation(4, 0, 32, "miniMarioLeft", 16, 16);
 	AnimatedSprite::addAnimation(1, 0, 16, "miniMarioStop", 16, 16);
+	AnimatedSprite::addAnimation(1, 0, 280, "miniMarioDie", 16, 16);
 }
 
 

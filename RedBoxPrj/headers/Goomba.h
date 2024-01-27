@@ -64,9 +64,13 @@ public:
 
 	void setPlayerAccelX(const float accelX);
 
+	void die();
+
 	std::queue<goombaData> m_goombaDataQueue;
 
-
+	bool m_alive;
+	bool m_oneUpGoomba;
+	int m_track;
 
 private:
 	float	m_accelY;

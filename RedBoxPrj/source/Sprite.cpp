@@ -1,6 +1,6 @@
 #include "Sprite.h"
 
-Sprite::Sprite(Graphics& graphics, const std::string& filePath,  int sourceWidth, int sourceHeight, int sourceX, int sourceY, int width, int height, float x, float y) : m_x(x), m_y(y), m_width(width), m_height(height)
+Sprite::Sprite(Graphics& graphics, const std::string& filePath,  int sourceWidth, int sourceHeight, int sourceX, int sourceY, int width, int height, float x, float y) : m_x(x), m_y(y), m_width(width), m_height(height), m_visible(true)
 {
 	m_sourceRect.x = sourceX;
 	m_sourceRect.y = sourceY;
@@ -20,8 +20,12 @@ void Sprite::update()
 
 void Sprite::draw(Graphics& graphics, int x, int y, int width, int height)
 {
-	SDL_Rect destinationRectangle = { x, y, width, height};
-	graphics.blitSurface(m_spriteSheet, &m_sourceRect, &destinationRectangle);
+	if (m_visible)
+	{
+		SDL_Rect destinationRectangle = { x, y, width, height };
+		graphics.blitSurface(m_spriteSheet, &m_sourceRect, &destinationRectangle);
+	}
+
 
 }
 

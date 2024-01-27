@@ -68,5 +68,6 @@ private:
 	std::vector<ItemBox>									m_itemBoxes;
 	std::vector<Lava>										m_lavaVec;
 	Goomba													m_cameraGoomba;
+	int														m_firstGoomba;
 			
 };

@@ -12,6 +12,8 @@ class Enemy : public AnimatedSprite
 public:
 	Enemy(Graphics& graphics, const std::string& filePath, int sourceWidth, int sourceHeight, int sourceX, int sourceY, int width, int height, float x, float y, float timeToUpdate);
 
+	~Enemy();
+
 	virtual void update(const float& elapsedTime, const std::vector<Tile>& collisionTiles);
 
 	virtual void handleCollisions(const std::vector<Tile>& collisionTiles);
@@ -19,6 +21,10 @@ public:
 	virtual void doAnimations();
 
 	virtual void draw(Graphics& graphics, Rectangle& camera);
+
+	virtual void die();
+
+	bool		m_alive;
 
 protected:
 
