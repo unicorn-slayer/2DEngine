@@ -112,7 +112,7 @@ void Game::loadResources()
 	for (int i = (int)itemBoxPositions.size() - 1; i >= 0; i--)
 	{
 		int x = itemBoxPositions.back().first;
-		int y = itemBoxPositions.back().second - 2;
+		int y = itemBoxPositions.back().second;
 
 		ItemBox itemBox(m_graphics, (float)x, (float)y); // 
 		m_itemBoxes.push_back(itemBox); // 

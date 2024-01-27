@@ -243,6 +243,7 @@ JumpingMario::JumpingMario(Graphics& graphics, float x, float y)
 
 void JumpingMario::update(const float& elapsedTime, const std::vector<Tile>& collisionTiles)
 {
+
 	float maxSpeed = 5.0f;
 
 	m_playerVelocityX += m_accelerationMagX * elapsedTime;
@@ -263,7 +264,11 @@ void JumpingMario::update(const float& elapsedTime, const std::vector<Tile>& col
 	m_y += (m_playerVelocityY * elapsedTime);
 	m_boundingBox._y += (m_playerVelocityY * elapsedTime);
 
-	this->handleCollisions(collisionTiles);
+	if (m_alive)
+	{
+		this->handleCollisions(collisionTiles);
+
+	}
 }
 
 void JumpingMario::handleCollisions(const std::vector<Tile>& collisionTiles)
