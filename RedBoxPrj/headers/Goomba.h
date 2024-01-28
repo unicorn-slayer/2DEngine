@@ -60,9 +60,12 @@ public:
 
 	void setPlayerVelocityX(const float xVel);
 
+	void setPlayerVelocityY(const float yVel);
+
 	float getPlayerAccelX();
 
 	void setPlayerAccelX(const float accelX);
+
 
 	void die();
 

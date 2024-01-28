@@ -91,7 +91,6 @@ void Enemy::handleCollisions(const std::vector<Tile>& collisionTiles)
 			}
 		}
 	}
-
 }
 
 void Enemy::doAnimations()

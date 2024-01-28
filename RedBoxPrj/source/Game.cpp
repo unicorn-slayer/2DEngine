@@ -167,11 +167,11 @@ void Game::gameLoop()
 		// goombas if they get killed.
 		m_cameraGoomba.setCamera(m_camera);
 
-		this->updateEntities(m_enemiesList, m_goombas, m_cameraGoomba, m_fireballsVector, m_itemBoxes, m_lavaVec, m_level.getCollisionTiles(), timeStep, m_graphics);
+		this->updateEntities(m_enemiesList, m_goombas, m_cameraGoomba, m_deadGoombas, m_fireballsVector, m_itemBoxes, m_lavaVec, m_level.getCollisionTiles(), timeStep, m_graphics);
 
 		this->checkCollisions(m_enemiesList, m_goombas, m_fireballsVector, m_lavaVec, m_level.getCollisionTiles());
 
-		this->animationUpdate(m_enemiesList, m_goombas, m_fireballsVector, m_itemBoxes, m_lavaVec, timeStep);
+		this->animationUpdate(m_enemiesList, m_goombas, m_deadGoombas, m_fireballsVector, m_itemBoxes, m_lavaVec, timeStep);
 
 		this->focusCamera(m_goombas, m_cameraGoomba);
 
@@ -182,7 +182,7 @@ void Game::gameLoop()
 		//these next two lines will draw everything to the back buffer
 		m_level.draw(m_graphics, m_camera);
 
-		this->drawEntities(m_enemiesList, m_goombas, m_fireballsVector, m_itemBoxes, m_lavaVec, m_graphics, m_camera);
+		this->drawEntities(m_enemiesList, m_goombas, m_deadGoombas, m_fireballsVector, m_itemBoxes, m_lavaVec, m_graphics, m_camera);
 
 		// backbuffer becomes frontbuffer, i.e. the display we see
 		m_graphics.flip();
@@ -210,7 +210,7 @@ void Game::handleEvents(std::vector<Goomba>& goombas, Goomba& cameraGoomba, SDL_
 	cameraGoomba.handleEvent(event);
 }
 
-void Game::updateEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, Goomba& cameraGoomba, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, const std::vector<Tile>& tiles, float& timeStep, Graphics& graphics)
+void Game::updateEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, Goomba& cameraGoomba, std::vector<Goomba>& deadGoombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, const std::vector<Tile>& tiles, float& timeStep, Graphics& graphics)
 {
 
 	if (enemiesList.size())
@@ -245,6 +245,14 @@ void Game::updateEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enem
 	if (goombas.size())
 	{
 		this->goombaFollow(goombas);
+	}
+
+	if (deadGoombas.size())
+	{
+		for (int i = 0; i < deadGoombas.size(); i++)
+		{
+			deadGoombas[i].update(timeStep, tiles);
+		}
 	}
 
 	if (fireballsVector.size())
@@ -357,10 +365,17 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 									{
 										if (enemiesList[j][k]->m_alive)
 										{
-											//goombas.erase(goombas.begin() + i);
-											//goto startEnemies;
-											goombas[i].m_visible = false;
-											goombas[i].m_alive = false;
+
+											if (goombas[i].m_visible == true)
+											{
+												Goomba goomba(m_graphics, goombas[i].getX(), goombas[i].getY());
+												goomba.m_alive = false;
+												goomba.setPlayerVelocityY(-5.0f);
+												m_deadGoombas.push_back(goomba);
+
+												goombas[i].m_visible = false;
+												goombas[i].m_alive = false;
+											}
 
 											if (i == 0)
 											{
@@ -456,7 +471,7 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 	}
 }
 
-void Game::animationUpdate(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, float& timeStep)
+void Game::animationUpdate(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, std::vector<Goomba>& deadGoombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, float& timeStep)
 {
 
 	if (enemiesList.size())
@@ -482,6 +497,16 @@ void Game::animationUpdate(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 			goombas[i].doAnimations();
 
 			goombas[i].animationUpdate(timeStep);
+		}
+	}
+
+	if (deadGoombas.size())
+	{
+		for (int i = 0; i < deadGoombas.size(); i++)
+		{
+			deadGoombas[i].doAnimations();
+
+			deadGoombas[i].animationUpdate(timeStep);
 		}
 	}
 
@@ -539,7 +564,7 @@ void Game::focusCamera(std::vector<Goomba>& goombas, Goomba& cameraGoomba)
 	}
 }
 
-void Game::drawEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, Graphics& graphics, Rectangle& camera)
+void Game::drawEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, std::vector<Goomba>& deadGoombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, Graphics& graphics, Rectangle& camera)
 {
 
 	if (enemiesList.size())
@@ -562,6 +587,14 @@ void Game::drawEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemie
 		for (int i = 0; i < goombas.size(); i++)
 		{
 			goombas[i].draw(graphics, camera);
+		}
+	}
+
+	if (deadGoombas.size())
+	{
+		for (int i = 0; i < deadGoombas.size(); i++)
+		{
+			deadGoombas[i].draw(graphics, camera);
 		}
 	}
 

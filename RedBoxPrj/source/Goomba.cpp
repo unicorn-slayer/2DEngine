@@ -156,110 +156,120 @@ void Goomba::updateGoombaDataQueue()
 
 void Goomba::handleCollisions(const std::vector<Tile>& collisionTiles)
 {
-	std::vector<Tile> collisionTilesActive;
-
-	// handle collisions
-	for (const Tile& tile : collisionTiles)
+	if(m_alive)
 	{
-		if (Sprite::m_boundingBox.checkCollision(tile.boundingBox))
-		{
-			collisionTilesActive.push_back(tile);			
-		}
-	}
+		std::vector<Tile> collisionTilesActive;
 
-	if (!collisionTilesActive.empty())
-	{
-		for (Tile& tile : collisionTilesActive)
+		// handle collisions
+		for (const Tile& tile : collisionTiles)
 		{
-  			sides::Side side = m_boundingBox.getCollisionSide(tile.boundingBox);
-
-			switch (side)
+			if (Sprite::m_boundingBox.checkCollision(tile.boundingBox))
 			{
-			case sides::TOP:
-				m_playerVelocityY = 0;
-				Sprite::m_y = tile.boundingBox._y + tile.boundingBox._height + 1;
-				Sprite::m_boundingBox._y = tile.boundingBox._y + Sprite::m_height + 1;
-				break;
-
-			case sides::BOTTOM:
-				Sprite::m_y = tile.boundingBox._y - tile.boundingBox._height - 1;
-				Sprite::m_boundingBox._y = tile.boundingBox._y - Sprite::m_height - 1;
-				m_playerVelocityY = 0;
-				m_grounded = true;
-				m_frameCounter = 0;
-				break;
-
-			case sides::LEFT:
-				Sprite::m_x = (tile.boundingBox._x + tile.boundingBox._width) + 1;
-				Sprite::m_boundingBox._x = (tile.boundingBox._x + Sprite::m_width) + 1;
-				m_playerVelocityX = 0;
-				break;
-
-			case sides::RIGHT:
-				Sprite::m_x = (tile.boundingBox._x - globals::g_tileWidth) - 1;
-				Sprite::m_boundingBox._x = (tile.boundingBox._x - Sprite::m_width) - 1;
-				m_playerVelocityX = 0;
-				break;
+				collisionTilesActive.push_back(tile);
 			}
 		}
-	}
-	else
-	{
-		m_frameCounter++;
+
+		if (!collisionTilesActive.empty())
+		{
+			for (Tile& tile : collisionTilesActive)
+			{
+				sides::Side side = m_boundingBox.getCollisionSide(tile.boundingBox);
+
+				switch (side)
+				{
+				case sides::TOP:
+					m_playerVelocityY = 0;
+					Sprite::m_y = tile.boundingBox._y + tile.boundingBox._height + 1;
+					Sprite::m_boundingBox._y = tile.boundingBox._y + Sprite::m_height + 1;
+					break;
+
+				case sides::BOTTOM:
+					Sprite::m_y = tile.boundingBox._y - tile.boundingBox._height - 1;
+					Sprite::m_boundingBox._y = tile.boundingBox._y - Sprite::m_height - 1;
+					m_playerVelocityY = 0;
+					m_grounded = true;
+					m_frameCounter = 0;
+					break;
+
+				case sides::LEFT:
+					Sprite::m_x = (tile.boundingBox._x + tile.boundingBox._width) + 1;
+					Sprite::m_boundingBox._x = (tile.boundingBox._x + Sprite::m_width) + 1;
+					m_playerVelocityX = 0;
+					break;
+
+				case sides::RIGHT:
+					Sprite::m_x = (tile.boundingBox._x - globals::g_tileWidth) - 1;
+					Sprite::m_boundingBox._x = (tile.boundingBox._x - Sprite::m_width) - 1;
+					m_playerVelocityX = 0;
+					break;
+				}
+			}
+		}
+		else
+		{
+			m_frameCounter++;
+		}
+
+		// hack to make sure physiscs works.
+		// When the player runs off the edge of a platform, he must lost ability to jump. Ideally, we'd just check to see if there
+		// are any collisions with the bottom side of the player. If there are none, then _grounded becomes false. This is tricky
+		// to implement. I first did a coarse method, where I just check if there are any collisions with the player. If there are no
+		// collisions, i.e when playeer walks off platform, then _grounded should be false. However, for a reason that is something to do 
+		// with timing, (maybe elapsed time is very small in an instance so change in y is too small to trigger a detection) sometimes no detections
+		// are made, even when there should be. In this instance _grounded will still becomes false and the jump won't execute. The trick below
+		// just essentially makes sure the player is most definitely not in contact with the ground, i.e. there has to be 10 confirmations
+		// that the player is not in contact with ground before _grounded is false.
+		// Even if this method is used, should still find a more accurate way of ensuring _grounded = false only when there are no BOTTOM
+		// side collisions. At the moment this will happen when there are simply no collisions. Might still be ok.
+		if (m_frameCounter > 100)
+		{
+			m_grounded = false;
+		}
 	}
 
-	// hack to make sure physiscs works.
-	// When the player runs off the edge of a platform, he must lost ability to jump. Ideally, we'd just check to see if there
-	// are any collisions with the bottom side of the player. If there are none, then _grounded becomes false. This is tricky
-	// to implement. I first did a coarse method, where I just check if there are any collisions with the player. If there are no
-	// collisions, i.e when playeer walks off platform, then _grounded should be false. However, for a reason that is something to do 
-	// with timing, (maybe elapsed time is very small in an instance so change in y is too small to trigger a detection) sometimes no detections
-	// are made, even when there should be. In this instance _grounded will still becomes false and the jump won't execute. The trick below
-	// just essentially makes sure the player is most definitely not in contact with the ground, i.e. there has to be 10 confirmations
-	// that the player is not in contact with ground before _grounded is false.
-	// Even if this method is used, should still find a more accurate way of ensuring _grounded = false only when there are no BOTTOM
-	// side collisions. At the moment this will happen when there are simply no collisions. Might still be ok.
-	if (m_frameCounter > 100)
-	{
-		m_grounded = false;
-	}
+
+
 }
 
 //handles screen going out of bounds
 void Goomba::handleScreenBounds(const float& elapsedTime)
 {
-	float max_x = globals::g_mapWidth - (float)Sprite::m_width;
-	float max_y = globals::g_mapHeight - (float)Sprite::m_height;
-
-	// handle screen out of bounds in x
-	if (Sprite::m_x < 0)
+	if (m_alive)
 	{
-		Sprite::m_x = 0;
-		Sprite::m_boundingBox._x = 0;
-		m_playerVelocityX = 0;
+		float max_x = globals::g_mapWidth - (float)Sprite::m_width;
+		float max_y = globals::g_mapHeight - (float)Sprite::m_height;
+
+		// handle screen out of bounds in x
+		if (Sprite::m_x < 0)
+		{
+			Sprite::m_x = 0;
+			Sprite::m_boundingBox._x = 0;
+			m_playerVelocityX = 0;
+		}
+
+		if (Sprite::m_x > max_x)
+		{
+			Sprite::m_x = max_x;
+			Sprite::m_boundingBox._x = max_x;
+			m_playerVelocityX = 0;
+		}
+
+		// handle screen out of bounds in y
+		if (Sprite::m_y < 0)
+		{
+			Sprite::m_y = 0;
+			Sprite::m_boundingBox._y = 0;
+			m_playerVelocityY = 0;
+		}
+
+		if (Sprite::m_y > max_y)
+		{
+			Sprite::m_y = max_y;
+			Sprite::m_boundingBox._y = max_y;
+			m_playerVelocityY = 0;
+		}
 	}
 
-	if (Sprite::m_x > max_x)
-	{
-		Sprite::m_x = max_x;
-		Sprite::m_boundingBox._x = max_x;
-		m_playerVelocityX = 0;
-	}
-
-	// handle screen out of bounds in y
-	if (Sprite::m_y < 0)
-	{
-		Sprite::m_y = 0;
-		Sprite::m_boundingBox._y = 0;
-		m_playerVelocityY = 0;
-	}
-
-	if (Sprite::m_y > max_y)
-	{
-		Sprite::m_y = max_y;
-		Sprite::m_boundingBox._y = max_y;
-		m_playerVelocityY = 0;
-	}
 }
 
 void Goomba::draw(Graphics& graphics, Rectangle& camera)
@@ -336,7 +346,7 @@ void Goomba::setupAnimation()
 {
 	AnimatedSprite::addAnimation(2, 0, 0, "goombaWalk", 16, 16);
 	AnimatedSprite::addAnimation(1, 0, 0, "goombaStop", 16, 16);
-	AnimatedSprite::addAnimation(1, 0, 280, "goombaDie", 8, 16);
+	AnimatedSprite::addAnimation(1, 0, 296, "goombaDie", 16, 16);
 }
 
 bool Goomba::getRightHeld()
@@ -380,6 +390,11 @@ void Goomba::setPlayerVelocityX(const float xVel)
 	m_playerVelocityX = xVel;
 }
 
+void Goomba::setPlayerVelocityY(const float yVel)
+{
+	m_playerVelocityY = yVel;
+}
+
 float Goomba::getPlayerAccelX()
 {
 	return m_accelX;
@@ -389,6 +404,7 @@ void Goomba::setPlayerAccelX(const float accelX)
 {
 	m_accelX = accelX;
 }
+
 
 void Goomba::die()
 {
