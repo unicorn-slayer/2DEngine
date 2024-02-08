@@ -285,6 +285,27 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
                 object = object->NextSiblingElement("object");
             }
 
+            objectgroup = objectgroup->NextSiblingElement("objectgroup");
+            objectgroup->QueryIntAttribute("id", &groupId);
+
+        }
+
+        if (groupId == 9) {
+            // Iterate through objects within the objectgroup
+            tinyxml2::XMLElement* object = objectgroup->FirstChildElement("object");
+            while (object != nullptr) {
+                int x = 0;
+                int y = 0;
+                int width = 0;
+                int height = 0;
+                object->QueryIntAttribute("x", &x);
+                object->QueryIntAttribute("y", &y);
+                object->QueryIntAttribute("width", &width);
+                object->QueryIntAttribute("height", &height);
+                m_successBox.push_back({ x,y });
+                m_successBox.push_back({ width,height });
+                object = object->NextSiblingElement("object");
+            }
 
         }
 
@@ -339,4 +360,9 @@ std::vector<std::pair<int, int>> Level::getItemBoxes()
 std::vector<std::pair<int, int>> Level::getLavaPositions()
 {
     return m_lava;
+}
+
+std::vector<std::pair<int, int>> Level::getSuccessBox()
+{
+    return m_successBox;
 }

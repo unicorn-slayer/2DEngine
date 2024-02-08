@@ -179,27 +179,38 @@ void Luigi::update(const float& elapsedTime, const std::vector<Tile>& collisionT
 {
 	Enemy::update(elapsedTime, collisionTiles);
 
-	Luigi::launchFireball();
+	if (m_alive)
+	{
+		Luigi::launchFireball();
+	}
 }
 
 void Luigi::doAnimations()
 {
-	if (m_playerVelocityX != 0)
+	if (m_alive)
 	{
-		if (m_playerVelocityX > 0)
+		if (m_playerVelocityX != 0)
 		{
-			AnimatedSprite::playAnimation("bigLuigiRight");
+			if (m_playerVelocityX > 0)
+			{
+				AnimatedSprite::playAnimation("bigLuigiRight");
+			}
+			else
+			{
+				AnimatedSprite::playAnimation("bigLuigiLeft");
+			}
+
 		}
 		else
 		{
-			AnimatedSprite::playAnimation("bigLuigiLeft");
+			AnimatedSprite::playAnimation("bigLuigiRight");
 		}
-	
 	}
 	else
 	{
-		AnimatedSprite::playAnimation("bigLuigiRight");
+		AnimatedSprite::playAnimation("die");
 	}
+
 }
 
 
@@ -229,6 +240,7 @@ void Luigi::setupAnimation()
 {
 	AnimatedSprite::addAnimation(3, 0, 48, "bigLuigiRight", Sprite::m_sourceRect.w, Sprite::m_sourceRect.h);
 	AnimatedSprite::addAnimation(3, 0, 80, "bigLuigiLeft", Sprite::m_sourceRect.w, Sprite::m_sourceRect.h);
+	AnimatedSprite::addAnimation(1, 0, 335, "die", Sprite::m_sourceRect.w, Sprite::m_sourceRect.h);
 }
 
 
@@ -318,23 +330,31 @@ void JumpingMario::handleCollisions(const std::vector<Tile>& collisionTiles)
 
 void JumpingMario::doAnimations()
 {
-	if (m_grounded)
+	if (m_alive)
 	{
-		AnimatedSprite::playAnimation("Grounded");
-
-		m_grounded = false;
-	}
-	else
-	{
-		if (m_playerVelocityX > 0)
+		if (m_grounded)
 		{
-			AnimatedSprite::playAnimation("jumpRight");
+			AnimatedSprite::playAnimation("Grounded");
+
+			m_grounded = false;
 		}
 		else
 		{
-			AnimatedSprite::playAnimation("jumpLeft");
+			if (m_playerVelocityX > 0)
+			{
+				AnimatedSprite::playAnimation("jumpRight");
+			}
+			else
+			{
+				AnimatedSprite::playAnimation("jumpLeft");
+			}
 		}
 	}
+	else
+	{
+		AnimatedSprite::playAnimation("die");
+	}
+
 }
 
 void JumpingMario::setupAnimation()
@@ -342,4 +362,5 @@ void JumpingMario::setupAnimation()
 	AnimatedSprite::addAnimation(1, 0, 120, "jumpRight", Sprite::m_sourceRect.w, Sprite::m_sourceRect.h);
 	AnimatedSprite::addAnimation(1, 0, 152, "jumpLeft", Sprite::m_sourceRect.w, Sprite::m_sourceRect.h);
 	AnimatedSprite::addAnimation(1, 0, 184, "Grounded", Sprite::m_sourceRect.w, Sprite::m_sourceRect.h);
+	AnimatedSprite::addAnimation(1, 0, 304, "die", Sprite::m_sourceRect.w, Sprite::m_sourceRect.h);
 }

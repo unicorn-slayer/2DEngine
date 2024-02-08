@@ -51,8 +51,6 @@ void ItemBox::update(Graphics& graphics, std::vector<Goomba>& goombas)
 			}
 
 		}
-
-
 		case sides::LEFT:
 			break;
 

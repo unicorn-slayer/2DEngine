@@ -1,0 +1,9 @@
+things to do:
+
+- level success
+- some kind of reward for hitting boxes
+- level failure
+- sound effets
+
+minor things to do:
+- fix m_grounded bug. This should know when its grounded if in contact with ground, rather than simply jumping

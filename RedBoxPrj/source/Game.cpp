@@ -1,3 +1,4 @@
+#pragma once
 #include "Game.h"
 #include <SDL.h>
 #include "Graphics.h"
@@ -14,12 +15,33 @@
 #include "Enemy.h"
 #include <memory>
 
+class SoundEffects
+{
+public:
+	SoundEffects();
+
+	Mix_Music* gMusic = NULL;
+
+	Mix_Chunk* gBump = NULL;
+
+};
+
+SoundEffects::SoundEffects()
+{
+	gMusic = Mix_LoadMUS("beat.wav");
+
+	gBump = Mix_LoadWAV("high.wav");
+}
+
 Game::Game()
 	: m_graphics()
 	, m_input()
 	, m_level()
 	, m_camera({ 0, 0, 700, 700 })
 	, m_cameraGoomba(Goomba(m_graphics, globals::g_centreX, globals::g_centreY - 300))
+	, m_successBox(0, 0)
+	, m_levelSuccess(false)
+	, m_frameCounter(0)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	this->loadResources();
@@ -38,7 +60,14 @@ void Game::loadResources()
 		m_goombas.push_back(goomba);
 	}
 
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+	}
 
+	SoundEffects soundEffects;
+
+	Mix_PlayMusic(soundEffects.gMusic, -1);
 
 	/// load the marios and add them to enemy list
 	std::vector<std::pair<int, int>> spawn = m_level.getMarioSpawnPoints();
@@ -64,7 +93,7 @@ void Game::loadResources()
 
 	for (int i = 0; i < spawn.size(); i++)
 	{
-		//m_fireballsVector.push_back(fires);
+		m_fireballsVector.push_back(fires);
 	}
 
 	/// load the luigis and add them to enemy list along with a fireball vector from above.
@@ -72,15 +101,15 @@ void Game::loadResources()
 
 	std::vector<std::shared_ptr<Enemy>> luigis;
 	
-	for (int i = (int)spawn.size() - 1; i >= 0; i--)
+	for (int i = (int)spawn.size() - 1; i >= 5; i--)
 	{
 
-		//int x = spawn.back().first;
-		//int y = spawn.back().second;
+		int x = spawn.back().first;
+		int y = spawn.back().second;
 
-		//luigis.push_back(std::make_shared<Luigi>(m_graphics, (float)x, (float)y, m_fireballsVector[i]));
+		luigis.push_back(std::make_shared<Luigi>(m_graphics, (float)x, (float)y, m_fireballsVector[i]));
 
-		//spawn.pop_back();
+		spawn.pop_back();
 	}
 
 	m_enemiesList.push_back(luigis);
@@ -120,6 +149,14 @@ void Game::loadResources()
 		itemBoxPositions.pop_back();
 	}
 
+	std::vector<std::pair<int, int>> successBoxPosition;
+
+	successBoxPosition = m_level.getSuccessBox();
+
+	m_successBox.m_boundingBox._x = (float)successBoxPosition[0].first;
+	m_successBox.m_boundingBox._y = (float)successBoxPosition[0].second;
+	m_successBox.m_boundingBox._width = successBoxPosition[1].first;
+	m_successBox.m_boundingBox._height = successBoxPosition[1].second;
 
 	/// load lavaPositions then add them to m_lavaVec
 	std::vector<std::pair<int, int>> lavaPositions;
@@ -193,6 +230,18 @@ void Game::gameLoop()
 
 			SDL_Delay((Uint32)(delayTime - frameTime));
 
+		}
+
+		this->checkLevelSuccess(m_goombas, m_successBox);
+
+		if (m_levelSuccess)
+		{
+			//m_frameCounter++;
+
+			//if (m_frameCounter == 200)
+			//{
+
+			//}
 		}
 
 	}
@@ -411,6 +460,8 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 								{
 									goombas.erase(goombas.begin() + i);
 
+
+
 									fireballsVector[j].erase(fireballsVector[j].begin() + k);
 									//break;
 
@@ -628,4 +679,9 @@ void Game::drawEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemie
 			lavaVec[i].draw(graphics, camera);
 		}
 	}
+}
+
+void Game::checkLevelSuccess(std::vector<Goomba>& goombas, SuccessBox& successBox)
+{
+	m_levelSuccess = successBox.update(goombas);
 }

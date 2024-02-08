@@ -1,4 +1,6 @@
 #pragma once
+#include <SDL_mixer.h>
+
 
 namespace globals {
 
@@ -25,3 +27,4 @@ namespace sides {
 	};
 
 }
+

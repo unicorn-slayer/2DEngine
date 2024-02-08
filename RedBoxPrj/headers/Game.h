@@ -11,6 +11,7 @@
 #include "Lava.h"
 #include "ItemBox.h"
 #include "Fireballs.h"
+#include "SuccessBox.h"
 
 struct Tile;
 
@@ -55,6 +56,8 @@ public:
 
 	void drawEntities(std::vector<std::vector<std::shared_ptr<Enemy>>>& enemiesList, std::vector<Goomba>& goombas, std::vector<Goomba>& deadGoombas, std::vector<std::vector<Fireballs>>& fireballsVector, std::vector<ItemBox>& itemBoxes, std::vector<Lava>& lavaVec, Graphics& graphics, Rectangle& camera);
 
+	void checkLevelSuccess(std::vector<Goomba>& goombas, SuccessBox& successBox);
+
 
 private:
 
@@ -70,5 +73,8 @@ private:
 	Goomba													m_cameraGoomba;
 	int														m_firstGoomba;
 	std::vector<Goomba>										m_deadGoombas;
+	SuccessBox												m_successBox;
+	bool													m_levelSuccess;
+	int														m_frameCounter;
 			
 };
