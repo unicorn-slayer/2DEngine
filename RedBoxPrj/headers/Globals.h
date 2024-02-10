@@ -28,3 +28,39 @@ namespace sides {
 
 }
 
+// ISSUE: Ensure resources are deallocated
+
+
+class MusicPlayer {
+public:
+    static MusicPlayer& getInstance() {
+        static MusicPlayer instance;
+        return instance;
+    }
+
+    void playMusic(const char* musicFile) {
+        // Load and play the music
+        Mix_Music* music = Mix_LoadMUS(musicFile);
+        if (music != nullptr) {
+            Mix_PlayMusic(music, -1); // -1 for infinite loop
+        }
+    }
+
+    void playSound(const char* soundFile) {
+        // Load and play the music
+        Mix_Chunk* sound = Mix_LoadWAV(soundFile);
+        if (sound != nullptr) {
+            Mix_PlayChannel(-1, sound, 0); // -1 for infinite loop
+        }
+    }
+
+
+private:
+    MusicPlayer() {
+        // Initialize SDL_mixer here if needed
+    }
+
+    // Disable copy constructor and assignment operator
+    MusicPlayer(const MusicPlayer&) = delete;
+    MusicPlayer& operator=(const MusicPlayer&) = delete;
+};

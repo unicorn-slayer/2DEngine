@@ -6,6 +6,7 @@
 
 SuccessBox::SuccessBox(float x, float y)
 	: m_boundingBox(x, y, 32, 32)
+	, m_playOnce(true)
 {
 
 
@@ -21,7 +22,16 @@ bool SuccessBox::update(std::vector<Goomba>& goombas)
 
 		if (m_boundingBox.checkCollision(goombas[i].getBoundingBox()))
 		{
+			if (m_playOnce)
+			{
+				Mix_PauseMusic();
+				MusicPlayer::getInstance().playSound("music/levelComplete.wav");
+
+
+				m_playOnce = false;
+			}
 			return true;
+
 		}
 	}
 

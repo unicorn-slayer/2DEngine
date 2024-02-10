@@ -15,24 +15,6 @@
 #include "Enemy.h"
 #include <memory>
 
-class SoundEffects
-{
-public:
-	SoundEffects();
-
-	Mix_Music* gMusic = NULL;
-
-	Mix_Chunk* gBump = NULL;
-
-};
-
-SoundEffects::SoundEffects()
-{
-	gMusic = Mix_LoadMUS("beat.wav");
-
-	gBump = Mix_LoadWAV("high.wav");
-}
-
 Game::Game()
 	: m_graphics()
 	, m_input()
@@ -46,7 +28,6 @@ Game::Game()
 	SDL_Init(SDL_INIT_EVERYTHING);
 	this->loadResources();
 	this->gameLoop();
-
 }
 
 void Game::loadResources()
@@ -65,9 +46,7 @@ void Game::loadResources()
 		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 	}
 
-	SoundEffects soundEffects;
-
-	Mix_PlayMusic(soundEffects.gMusic, -1);
+	MusicPlayer::getInstance().playMusic("music/themeMusic.mid");
 
 	/// load the marios and add them to enemy list
 	std::vector<std::pair<int, int>> spawn = m_level.getMarioSpawnPoints();
@@ -407,6 +386,8 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 								if (!goombas[i].getGrounded())
 								{
 									enemiesList[j][k]->die();
+									MusicPlayer::getInstance().playSound("music/enemyDie.wav");
+
 								}
 								else
 								{
@@ -419,6 +400,7 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 											{
 												Goomba goomba(m_graphics, goombas[i].getX(), goombas[i].getY());
 												goomba.m_alive = false;
+												MusicPlayer::getInstance().playSound("music/goombaDie.mid");
 												goomba.setPlayerVelocityY(-5.0f);
 												m_deadGoombas.push_back(goomba);
 
@@ -429,6 +411,7 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 											if (i == 0)
 											{
 												goombas.erase(goombas.begin() + i);
+												MusicPlayer::getInstance().playSound("music/goombaDie.wav");
 												goto startEnemies;
 
 											}
@@ -442,7 +425,7 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 			}
 		}
 
-
+		//ISSUE: if goombas hit fireballs then they need their alive status set to false. Same for lava below
 		startagain:
 		if (goombas.size())
 		{

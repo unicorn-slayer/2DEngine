@@ -47,6 +47,7 @@ void ItemBox::update(Graphics& graphics, std::vector<Goomba>& goombas)
 			if (!m_boxEmpty)
 			{
 				m_boxEmpty = true;
+				MusicPlayer::getInstance().playSound("music/hitBox.wav");
 				break;
 			}
 
