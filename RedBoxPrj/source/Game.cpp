@@ -398,18 +398,23 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 
 											if (goombas[i].m_visible == true)
 											{
+												//when goombas die, they turn invisible. However, for the purposes of a death animation, a temporary goombas is created which will do a death animation.
 												Goomba goomba(m_graphics, goombas[i].getX(), goombas[i].getY());
 												goomba.m_alive = false;
-												MusicPlayer::getInstance().playSound("music/goombaDie.mid");
 												goomba.setPlayerVelocityY(-5.0f);
 												m_deadGoombas.push_back(goomba);
 
+												// the actual goomba dies here
 												goombas[i].m_visible = false;
 												goombas[i].m_alive = false;
+
+												MusicPlayer::getInstance().playSound("music/goombaDie.mid");
+
 											}
 
 											if (i == 0)
 											{
+												// if the leading goomba dies, it needs to be erased so the next leading goomba is controlled via the keys.
 												goombas.erase(goombas.begin() + i);
 												MusicPlayer::getInstance().playSound("music/goombaDie.wav");
 												goto startEnemies;
@@ -441,14 +446,39 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 							{
 								if (goombas[i].getBoundingBox().checkCollision(fireballsVector[j][k].getBoundingBox()))
 								{
-									goombas.erase(goombas.begin() + i);
+									//goombas.erase(goombas.begin() + i);
 
 
 
-									fireballsVector[j].erase(fireballsVector[j].begin() + k);
-									//break;
+									//fireballsVector[j].erase(fireballsVector[j].begin() + k);
+									////break;
 
-									goto startagain;
+									//goto startagain;
+
+									if (goombas[i].m_visible == true)
+									{
+										//when goombas die, they turn invisible. However, for the purposes of a death animation, a temporary goombas is created which will do a death animation.
+										Goomba goomba(m_graphics, goombas[i].getX(), goombas[i].getY());
+										goomba.m_alive = false;
+										goomba.setPlayerVelocityY(-5.0f);
+										m_deadGoombas.push_back(goomba);
+
+										// the actual goomba dies here
+										goombas[i].m_visible = false;
+										goombas[i].m_alive = false;
+
+										MusicPlayer::getInstance().playSound("music/goombaDie.mid");
+
+									}
+
+									if (i == 0)
+									{
+										// if the leading goomba dies, it needs to be erased so the next leading goomba is controlled via the keys.
+										goombas.erase(goombas.begin() + i);
+										MusicPlayer::getInstance().playSound("music/goombaDie.wav");
+										goto startEnemies;
+
+									}
 								}
 							}							
 						}

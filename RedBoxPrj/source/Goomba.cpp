@@ -184,7 +184,7 @@ void Goomba::handleCollisions(const std::vector<Tile>& collisionTiles)
 					break;
 
 				case sides::BOTTOM:
-					Sprite::m_y = tile.boundingBox._y - tile.boundingBox._height - 1;
+					Sprite::m_y = tile.boundingBox._y - globals::g_tileHeight - 1;
 					Sprite::m_boundingBox._y = tile.boundingBox._y - Sprite::m_height - 1;
 					m_playerVelocityY = 0;
 					m_grounded = true;
@@ -346,7 +346,7 @@ void Goomba::setupAnimation()
 {
 	AnimatedSprite::addAnimation(2, 0, 0, "goombaWalk", 16, 16);
 	AnimatedSprite::addAnimation(1, 0, 0, "goombaStop", 16, 16);
-	AnimatedSprite::addAnimation(1, 0, 296, "goombaDie", 16, 16);
+	AnimatedSprite::addAnimation(1, 0, 296, "goombaDie", 16, 8);
 }
 
 bool Goomba::getRightHeld()
