@@ -24,6 +24,9 @@ Game::Game()
 	, m_successBox(0, 0)
 	, m_levelSuccess(false)
 	, m_frameCounter(0)
+	, m_menu(m_graphics, "tileset.png", 32, 32, 32, 0, 700, 700, 0, 0)
+	, m_title(m_graphics, "title.png", 542, 142, 0, 0, 542, 142, 100, 300)
+	, m_play(m_graphics, "play.png", 386, 51, 0, 0, 386, 51, 0, 0)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	this->loadResources();
@@ -162,6 +165,22 @@ void Game::gameLoop()
 	float delayTime = (1000.0f/60.0f);
 
 	float timeStep = 1.0f;
+
+	while (true)
+	{
+		m_graphics.clear();
+		m_menu.draw(m_graphics, 0, 0, 700, 700);
+		m_title.draw(m_graphics, 100, 200, 542, 142);
+		m_play.draw(m_graphics, 100, 350, 386, 51);
+		m_graphics.flip();
+
+		if (SDL_PollEvent(&event)) {
+
+			if (event.key.keysym.sym == SDLK_RETURN) {
+				break;
+			}
+		}
+	}
 
 
 	while (true)

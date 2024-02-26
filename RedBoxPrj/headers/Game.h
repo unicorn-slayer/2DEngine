@@ -64,6 +64,9 @@ private:
 	Graphics												m_graphics;
 	Input													m_input;
 	Level													m_level;
+	Sprite													m_menu;
+	Sprite													m_title;
+	Sprite													m_play;
 	Rectangle												m_camera;
 	std::vector<Goomba>										m_goombas;
 	std::vector<std::vector<Fireballs>>						m_fireballsVector;
