@@ -264,9 +264,9 @@ void Goomba::handleScreenBounds(const float& elapsedTime)
 
 		if (Sprite::m_y > max_y)
 		{
-			Sprite::m_y = max_y;
-			Sprite::m_boundingBox._y = max_y;
-			m_playerVelocityY = 0;
+			//Sprite::m_y = max_y;
+			//Sprite::m_boundingBox._y = max_y;
+			//m_playerVelocityY = 0;
 		}
 	}
 

@@ -58,6 +58,8 @@ public:
 
 	void checkLevelSuccess(std::vector<Goomba>& goombas, SuccessBox& successBox);
 
+	bool m_quit;
+
 
 private:
 
@@ -67,6 +69,7 @@ private:
 	Sprite													m_menu;
 	Sprite													m_title;
 	Sprite													m_play;
+	Sprite													m_end;
 	Rectangle												m_camera;
 	std::vector<Goomba>										m_goombas;
 	std::vector<std::vector<Fireballs>>						m_fireballsVector;
@@ -79,5 +82,8 @@ private:
 	SuccessBox												m_successBox;
 	bool													m_levelSuccess;
 	int														m_frameCounter;
+	bool													m_levelComplete;
+	bool													m_dead;
+	bool													m_playOnce;
 			
 };

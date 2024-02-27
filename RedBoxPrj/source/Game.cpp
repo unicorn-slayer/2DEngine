@@ -26,7 +26,12 @@ Game::Game()
 	, m_frameCounter(0)
 	, m_menu(m_graphics, "tileset.png", 32, 32, 32, 0, 700, 700, 0, 0)
 	, m_title(m_graphics, "title.png", 542, 142, 0, 0, 542, 142, 100, 300)
+	, m_end(m_graphics, "end.png", 542, 142, 0, 0, 542, 142, 100, 300)
 	, m_play(m_graphics, "play.png", 386, 51, 0, 0, 386, 51, 0, 0)
+	, m_levelComplete(false)
+	, m_quit(false)
+	, m_dead(false)
+	, m_playOnce(true)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	this->loadResources();
@@ -170,8 +175,8 @@ void Game::gameLoop()
 	{
 		m_graphics.clear();
 		m_menu.draw(m_graphics, 0, 0, 700, 700);
-		m_title.draw(m_graphics, 100, 200, 542, 142);
-		m_play.draw(m_graphics, 100, 350, 386, 51);
+		m_title.draw(m_graphics, 85, 200, 542, 142);
+		m_play.draw(m_graphics, 150, 550, 386, 51);
 		m_graphics.flip();
 
 		if (SDL_PollEvent(&event)) {
@@ -183,7 +188,7 @@ void Game::gameLoop()
 	}
 
 
-	while (true)
+	while (!m_levelComplete)
 	{
 		float startTimer = (float)SDL_GetTicks();
 
@@ -230,18 +235,75 @@ void Game::gameLoop()
 
 		}
 
+
+
+		if(!m_levelSuccess)
 		this->checkLevelSuccess(m_goombas, m_successBox);
 
-		if (m_levelSuccess)
+		if (m_goombas.empty())
 		{
-			//m_frameCounter++;
+			m_dead = true;
 
-			//if (m_frameCounter == 200)
-			//{
-
-			//}
 		}
 
+		for (int i = 0; i < m_goombas.size(); i++)
+		{
+			if (m_goombas[i].getY() > 700)
+			{
+				if (i == 3)
+				{
+					m_dead = true;
+				}
+				continue;
+			}
+			else
+			{
+				break;
+			}
+
+		}
+
+		if (m_dead)
+		{
+			if (m_playOnce)
+			{
+				Mix_HaltMusic();
+				MusicPlayer::getInstance().playSound("music/gameOver.wav");
+				m_playOnce = false;
+			}
+		}
+
+		if (m_levelSuccess || m_dead)
+		{
+			m_frameCounter++;
+
+			if (m_frameCounter > 380)
+			{
+				m_levelComplete = true;
+			}
+		}
+	}
+
+	while (true)
+	{
+		m_graphics.clear();
+		m_menu.draw(m_graphics, 0, 0, 700, 700);
+
+		m_end.draw(m_graphics, 80, 200, 542, 142);
+
+		m_graphics.flip();
+
+		if (SDL_PollEvent(&event)) {
+
+			if (event.key.keysym.sym == SDLK_RETURN) {
+				break;
+			}
+
+			if (event.key.keysym.sym == SDLK_q) {
+				m_quit = true;
+				break;
+			}
+		}
 	}
 
 }
@@ -427,7 +489,7 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 												goombas[i].m_visible = false;
 												goombas[i].m_alive = false;
 
-												MusicPlayer::getInstance().playSound("music/goombaDie.mid");
+												MusicPlayer::getInstance().playSound("music/goombaDie.wav");
 
 											}
 
@@ -486,7 +548,7 @@ void Game::checkCollisions(std::vector<std::vector<std::shared_ptr<Enemy>>>& ene
 										goombas[i].m_visible = false;
 										goombas[i].m_alive = false;
 
-										MusicPlayer::getInstance().playSound("music/goombaDie.mid");
+										MusicPlayer::getInstance().playSound("music/goombaDie.wav");
 
 									}
 
