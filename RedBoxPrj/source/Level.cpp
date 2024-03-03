@@ -39,7 +39,7 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
 {
     //setting up xml parsing
     tinyxml2::XMLDocument doc;
-    if (doc.LoadFile("map.tmx") != tinyxml2::XML_SUCCESS) {
+    if (doc.LoadFile("mapFinal.tmx") != tinyxml2::XML_SUCCESS) {
         std::cerr << "Error loading XML file." << std::endl;
         return;
     }
@@ -188,7 +188,7 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
         int groupId;
         objectgroup->QueryIntAttribute("id", &groupId);
 
-        if (groupId == 3) {
+        if (groupId == 11) {
             // Iterate through objects within the objectgroup
             tinyxml2::XMLElement* object = objectgroup->FirstChildElement("object");
             while (object != nullptr) {
@@ -256,22 +256,22 @@ void Level::loadMap(Graphics& graphics, const std::string& xml)
 
         }
 
-        if (groupId == 5) {
-            // Iterate through objects within the objectgroup
-            tinyxml2::XMLElement* object = objectgroup->FirstChildElement("object");
-            while (object != nullptr) {
-                int x = 0;
-                int y = 0;
-                object->QueryIntAttribute("x", &x);
-                object->QueryIntAttribute("y", &y);
-                m_luigiSpawnPoints.push_back({ x, y });
-                object = object->NextSiblingElement("object");
-            }
+        //if (groupId == 55) {
+        //    // Iterate through objects within the objectgroup
+        //    tinyxml2::XMLElement* object = objectgroup->FirstChildElement("object");
+        //    while (object != nullptr) {
+        //        int x = 0;
+        //        int y = 0;
+        //        object->QueryIntAttribute("x", &x);
+        //        object->QueryIntAttribute("y", &y);
+        //        m_luigiSpawnPoints.push_back({ x, y });
+        //        object = object->NextSiblingElement("object");
+        //    }
 
-            objectgroup = objectgroup->NextSiblingElement("objectgroup");
-            objectgroup->QueryIntAttribute("id", &groupId);
+        //    objectgroup = objectgroup->NextSiblingElement("objectgroup");
+        //    objectgroup->QueryIntAttribute("id", &groupId);
 
-        }
+        //}
 
         if (groupId == 7) {
             // Iterate through objects within the objectgroup

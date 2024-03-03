@@ -41,7 +41,7 @@ Game::Game()
 void Game::loadResources()
 {
 	// load the level
-	m_level.loadMap(m_graphics, "map.tmx");
+	m_level.loadMap(m_graphics, "mapFinal.tmx");
 
 	//load the goombas
 	for (int i = 0; i < 4; ++i) {
@@ -61,14 +61,14 @@ void Game::loadResources()
 
 	std::vector<std::shared_ptr<Enemy>> marios;
 
-	for (int i = (int)spawn.size() - 8; i >= 0; i--)
+	for (int i = (int)spawn.size()-1; i >= 0; i--)
 	{
-		//int x = spawn.back().first;
-		//int y = spawn.back().second;
+		int x = spawn.back().first;
+		int y = spawn.back().second;
 
-		//marios.push_back(std::make_shared<Mario>(m_graphics, (float)x, (float)y));
+		marios.push_back(std::make_shared<Mario>(m_graphics, (float)x, (float)y));
 
-		//spawn.pop_back();
+		spawn.pop_back();
 	}
 
 	m_enemiesList.push_back(marios);
